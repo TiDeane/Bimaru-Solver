@@ -2,9 +2,9 @@
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
 
-# Grupo 00:
-# 00000 Nome1
-# 00000 Nome2
+# Grupo 115:
+# 
+# 104145 Artur Krystopchuk
 
 import sys
 from search import (
@@ -35,18 +35,21 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    def get_value(self, row: int, col: int) -> str:
+    """devolve str"""
+    def get_value(self, row: int, col: int):
         """Devolve o valor na respetiva posição do tabuleiro."""
         # TODO
         pass
 
-    def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
+    """ devolve (str, str)"""
+    def adjacent_vertical_values(self, row: int, col: int):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
         # TODO
         pass
 
-    def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
+    """ devolve (str, str)"""
+    def adjacent_horizontal_values(self, row: int, col: int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         # TODO
