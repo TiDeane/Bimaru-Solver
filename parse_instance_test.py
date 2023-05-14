@@ -1,5 +1,6 @@
 from sys import stdin
 import numpy as np
+
 rows_nships = stdin.readline().strip("\n")
 rows_nships = rows_nships.split("\t")
 rows_nships = rows_nships[1:]
