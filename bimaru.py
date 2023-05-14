@@ -3,8 +3,10 @@
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
 
 # Grupo 115:
-# 
+# 103811 Tiago Deane
 # 104145 Artur Krystopchuk
+
+import numpy as np
 
 import sys
 from search import (
@@ -35,25 +37,23 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    """devolve str"""
-    def get_value(self, row: int, col: int):
-        """Devolve o valor na respetiva posição do tabuleiro."""
-        # TODO
-        pass
+    def __init__(self, grid):
+        self.grid = grid
 
-    """ devolve (str, str)"""
-    def adjacent_vertical_values(self, row: int, col: int):
+    def get_value(self, row: int, col: int) -> str:
+        """Devolve o valor na respetiva posição do tabuleiro."""
+        if 0 <= row <= 9 and 0 <= col <= 9:
+            return self.grid[row][col]
+
+    def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
-        # TODO
-        pass
+        return (self.get_value(row-1, col), self.get_number(row+1, col))
 
-    """ devolve (str, str)"""
-    def adjacent_horizontal_values(self, row: int, col: int):
+    def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        # TODO
-        pass
+        return (self.get_number(row, col-1), self.get_number(row, col+1))
 
     @staticmethod
     def parse_instance():
@@ -67,6 +67,21 @@ class Board:
             > line = stdin.readline().split()
         """
         # TODO
+
+        from sys import stdin
+        rows_nships = stdin.readline().strip("\n")
+        rows_nships = rows_nships.split("\t")
+        rows_nships = rows_nships[1:]
+        rows_nships = (tuple(map(int, rows_nships)))
+
+        cols_nships = stdin.readline().strip("\n")
+        cols_nships = cols_nships.split("\t")
+        cols_nships = cols_nships[1:]
+        cols_nships = (tuple(map(int, cols_nships)))
+
+        nhints = int(input())
+
+        # RETURNS A BOARD
         pass
 
     # TODO: outros metodos da classe
@@ -113,4 +128,7 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
+
+    board = Board.parse_instance()
+
     pass
