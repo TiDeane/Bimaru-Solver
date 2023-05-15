@@ -55,6 +55,8 @@ for _ in range(nhints):
             no_ship.append(tuple((aux[0], aux[1]+1)))
             no_ship.append(tuple((aux[0]+1, aux[1]-1)))
             no_ship.append(tuple((aux[0]+1, aux[1]+1)))
+            no_ship.append(tuple((aux[0]+2, aux[1]-1)))
+            no_ship.append(tuple((aux[0]+2, aux[1]+1)))
         case 'M':
             M[aux[0]][aux[1]] = 1
             hints_pos.append(tuple(map(int, aux)))
@@ -67,6 +69,8 @@ for _ in range(nhints):
             M[aux[0]][aux[1]] = 1
             hints_pos.append(tuple(map(int, aux)))
 
+            no_ship.append(tuple((aux[0]-2, aux[1]-1)))
+            no_ship.append(tuple((aux[0]-2, aux[1]+1)))
             no_ship.append(tuple((aux[0]-1, aux[1]-1)))
             no_ship.append(tuple((aux[0]-1, aux[1]+1)))
             no_ship.append(tuple((aux[0], aux[1]-1)))
@@ -81,18 +85,22 @@ for _ in range(nhints):
             no_ship.append(tuple((aux[0]-1, aux[1]-1)))
             no_ship.append(tuple((aux[0]-1, aux[1])))
             no_ship.append(tuple((aux[0]-1, aux[1]+1)))
+            no_ship.append(tuple((aux[0]-1, aux[1]+2)))
             no_ship.append(tuple((aux[0], aux[1]-1)))
             no_ship.append(tuple((aux[0]+1, aux[1]-1)))
             no_ship.append(tuple((aux[0]+1, aux[1])))
             no_ship.append(tuple((aux[0]+1, aux[1]+1)))
+            no_ship.append(tuple((aux[0]+1, aux[1]+2)))
         case 'R':
             M[aux[0]][aux[1]] = 1
             hints_pos.append(tuple(map(int, aux)))
 
+            no_ship.append(tuple((aux[0]-1, aux[1]-2)))
             no_ship.append(tuple((aux[0]-1, aux[1]-1)))
             no_ship.append(tuple((aux[0]-1, aux[1])))
             no_ship.append(tuple((aux[0]-1, aux[1]+1)))
             no_ship.append(tuple((aux[0], aux[1]+1)))
+            no_ship.append(tuple((aux[0]+1, aux[1]-2)))
             no_ship.append(tuple((aux[0]+1, aux[1]-1)))
             no_ship.append(tuple((aux[0]+1, aux[1])))
             no_ship.append(tuple((aux[0]+1, aux[1]+1)))
