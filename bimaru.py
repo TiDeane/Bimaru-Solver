@@ -282,6 +282,17 @@ class Board:
         respectivamente."""
         return (self.get_value(row, col - 1), self.get_value(row, col + 1))
     
+    def get_row_sum(self, row: int):
+        if 0 <= row <= 9:
+            return sum(self.grid[row])
+        
+    def get_col_sum(self, col: int):
+        sum = 0
+        if 0 <= col <= 9:
+            for row in range(10):
+                sum += self.grid[row][col]
+            return sum
+    
     def update_grid(self, grid, include=True):
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
