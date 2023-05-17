@@ -293,6 +293,18 @@ class Board:
                 sum += self.grid[row][col]
             return sum
     
+    def check_objective(self):
+        for n in range(10):
+            if self.get_row_sum(n) != self.rows_nships[n] or \
+                    self.get_col_sum(n) != self.cols_nships[n]:
+                return False
+            
+        for pos in self.hints_pos:
+            if self.grid[pos[0]][pos[1]] == 0:
+                return False
+                
+        return True
+    
     def update_grid(self, grid, include=True):
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
@@ -400,8 +412,7 @@ class Bimaru(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
-        # TODO
-        pass
+        return state.board.check_objective()
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
