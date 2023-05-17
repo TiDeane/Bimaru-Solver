@@ -19,6 +19,222 @@ from search import (
     recursive_best_first_search,
 )
 
+def interpret_hints(nhints: int):
+    """Interprets the given hints, composing the 'no_ships' and 'hints_pos'
+    lists that contain all positions that cannot have a ship and all positions
+    that need to have a ship in the final grid, respectively"""
+    for _ in range(nhints):
+        hints_aux = sys.stdin.readline().strip("\n\r")
+        hints_aux = hints_aux.split("\t")
+
+        aux = tuple(map(int, hints_aux[1:3]))
+
+        match hints_aux[3]:
+            case 'W':
+                Board.M[aux[0]][aux[1]] = 0
+
+                Board.no_ships.append(aux)
+            case 'C':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+            case 'T':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+2, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+2, aux[1]+1)))
+            case 'M':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+            case 'B':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-2, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-2, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+            case 'L':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+2)))
+                Board.no_ships.append(tuple((aux[0], aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+2)))
+            case 'R':
+                Board.M[aux[0]][aux[1]] = 1
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-2)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]-1, aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0], aux[1]+1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-2)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]-1)))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1])))
+                Board.no_ships.append(tuple((aux[0]+1, aux[1]+1)))
+
+    Board.M = tuple(tuple(row) for row in Board.M)
+
+def create_grids_ship1():
+    """ inicializa tudo a water """
+    grids = [[[0 for _ in range(10)] for _ in range(10)] for _ in range(100)]
+
+    """ poem circle em todas posições onde pode estar na grid """
+    for gridNumber in range(100):
+        i = gridNumber // 10
+        j = gridNumber % 10
+
+        if (i,j) in Board.no_ships:
+            continue
+
+        grids[gridNumber][i][j] = 1
+
+        grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+        Board.all_grids.append(tuple(grids[gridNumber]))
+
+    return grids
+
+def create_grids_ship2():
+    """ inicializa tudo a water """
+    grids = [[[0 for _ in range(10)] for _ in range(10)] for _ in range(180)]
+    gridNumber = 0
+
+    """ poem o barco na horizontal """
+    for i in range(10):
+        for j in range(9):
+            if (i,j) in Board.no_ships:
+                continue
+
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i][j+1] = 1
+            
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(tuple(grids[gridNumber]))
+            gridNumber += 1
+
+    """ poem o barco na vertical """
+    for i in range(9):
+        for j in range(10):
+            if (i,j) in Board.no_ships:
+                continue
+
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i+1][j] = 1
+
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(tuple(grids[gridNumber]))
+            gridNumber += 1
+
+    return grids
+
+def create_grids_ship3():
+    """ inicializa tudo a water """
+    grids = [[[0 for _ in range(10)] for _ in range(10)] for _ in range(160)]
+    gridNumber = 0
+
+    """ poem o barco na horizontal """
+    for i in range(10):
+        for j in range(8):
+            if (i,j) in Board.no_ships:
+                continue
+
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i][j+1] = 1
+            grids[gridNumber][i][j+2] = 1
+
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(tuple(grids[gridNumber]))
+            gridNumber += 1
+
+    """ poem o barco na vertical """
+    for i in range(8):
+        for j in range(10):
+            if (i,j) in Board.no_ships:
+                continue
+
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i+1][j] = 1
+            grids[gridNumber][i+2][j] = 1
+
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(tuple(grids[gridNumber]))
+            gridNumber += 1
+
+    return grids
+
+def create_grids_ship4():
+    """ inicializa tudo a water """
+    grids = [[[0 for _ in range(10)] for _ in range(10)] for _ in range(140)]
+    gridNumber = 0
+
+    for i in range(10):
+        for j in range(7):
+            if (i,j) in Board.no_ships:
+                continue
+
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i][j+1] = 1
+            grids[gridNumber][i][j+2] = 1
+            grids[gridNumber][i][j+3] = 1
+
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(grids[gridNumber])
+            gridNumber += 1
+
+    """ poem o barco na vertical """
+    for i in range(7):
+        for j in range(10):
+            if (i,j) in Board.no_ships:
+                continue
+            
+            grids[gridNumber][i][j] = 1
+            grids[gridNumber][i+1][j] = 1
+            grids[gridNumber][i+2][j] = 1
+            grids[gridNumber][i+3][j] = 1
+
+            grids[gridNumber] = tuple(tuple(line) for line in grids[gridNumber])
+            Board.all_grids.append(tuple(grids[gridNumber]))
+            gridNumber += 1
+
+    return grids
+
+def create_grids():
+    create_grids_ship1() + create_grids_ship2() + create_grids_ship3() + create_grids_ship4()
+
 
 class BimaruState:
     state_id = 0
@@ -27,6 +243,7 @@ class BimaruState:
         self.board = board
         self.id = BimaruState.state_id
         BimaruState.state_id += 1
+        self.included = [0 for _ in range(len(Board.all_grids))]
 
     def __lt__(self, other):
         return self.id < other.id
@@ -37,9 +254,14 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
+    all_grids = []
+    no_ships = []
+    hints_pos = []
+    # Not sure if this last one is gonna be used
+    M = np.array(np.array([[100] * 10 for _ in range(10)]))
+
     def __init__(self, grid):
         self.grid = grid
-        self.invalid = False
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -49,12 +271,30 @@ class Board:
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
-        return (self.get_value(row - 1, col), self.get_number(row + 1, col))
+        return (self.get_value(row - 1, col), self.get_value(row + 1, col))
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        return (self.get_number(row, col - 1), self.get_number(row, col + 1))
+        return (self.get_value(row, col - 1), self.get_value(row, col + 1))
+    
+    def update_grid(self, grid, include=True):
+        """Combines the grids if include = True and removes "grid" from the
+        combination if include = False"""
+        if include:
+            for i in range(10):
+                for j in range(10):
+                    if self.grid[i][j] == 1 and grid[i][j] == 1:
+                        continue
+                    self.grid[i][j] += grid[i][j]
+        else:
+            for i in range(10):
+                for j in range(10):
+                    if self.grid[i][j] == 0 and grid[i][j] == 0:
+                        continue
+                    self.grid[i][j] -= grid[i][j]
+        return self.grid
+
 
     @staticmethod
     def parse_instance():
@@ -82,30 +322,55 @@ class Board:
 
         nhints = int(input())
 
+        # Builds the 'no_ship' and 'hints_pos' lists
+        interpret_hints(nhints)
+
+        starting_grid = [[0 for _ in range(10)] for _ in range(10)]
+
+        return Board(starting_grid)
+
         # RETURNS A BOARD
         pass
-
-    # TODO: outros metodos da classe
 
 
 class Bimaru(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         # TODO
+        state = BimaruState(board)
+        super().__init__(state)
         pass
 
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        # TODO
-        pass
+        actions = []
+
+        for i in range(len(state.board.all_grids)):
+            if state.included[i] == 0:
+                actions.append(("include", Board.all_grids[i], i))
+            elif state.included[i] == 1:
+                actions.append(("exclude", Board.all_grids[i], i))
+        
+        return actions
 
     def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        # TODO
+        if action[0] == "include":
+            state.board.update_grid(action[1])
+            state.included[action[2]] = 1
+        else:
+            state.board.update_grid(action[1], include=False)
+            state.included[action[2]] = 0
+
+        # (return solution_grid)
+        """Esta função retorna o state resultante da ação. Temos que criar mais
+        um state e um board e devolver isso (pra poderem voltar pra trás)? E
+        nesse caso, 'update_grid' tem que devolver a nova grid resultante da
+        ação ao invés de alterar a grid do Board..."""
         pass
 
     def goal_test(self, state: BimaruState):

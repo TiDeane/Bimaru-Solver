@@ -16,7 +16,7 @@ print('number of hints: ', nhints)
 
 # M[i][j] is 0 if cell(i,j) contains water in the initial grid, 1 if it contains
 # a piece of a ship, and 100 otherwise
-M = np.array(np.array([[100] * 10 for _ in range(10)])) # Without the np.array's ?
+M = np.array(np.array([[100] * 10 for _ in range(10)])) # Without the np.array's?
 
 no_ship = []
 hints_pos = []
@@ -104,6 +104,12 @@ for _ in range(nhints):
             no_ship.append(tuple((aux[0]+1, aux[1]-1)))
             no_ship.append(tuple((aux[0]+1, aux[1])))
             no_ship.append(tuple((aux[0]+1, aux[1]+1)))
+
+M = tuple(tuple(row) for row in M)
+hints_pos = tuple(hints_pos)
+# maybe remove impossible positions (like (-1,0)) or not add them in the first
+# place?
+no_ship = tuple(no_ship)
 
 print('position of the ships on the initial grid (hints): ', hints_pos)
 print('positions that CANNOT have ships: ', no_ship)
