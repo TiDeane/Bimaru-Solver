@@ -254,9 +254,13 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
+    rows_nships = []
+    cols_nships = []
+
     all_grids = []
     no_ships = []
     hints_pos = []
+
     # Not sure if this last one is gonna be used
     M = np.array(np.array([[100] * 10 for _ in range(10)]))
 
@@ -281,19 +285,23 @@ class Board:
     def update_grid(self, grid, include=True):
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
+        new_grid = [[0 for _ in range(10)] for _ in range(10)]
+        
         if include:
             for i in range(10):
                 for j in range(10):
                     if self.grid[i][j] == 1 and grid[i][j] == 1:
+                        new_grid[i][j] = 1
                         continue
-                    self.grid[i][j] += grid[i][j]
+                    new_grid[i][j] = self.grid[i][j] + grid[i][j]
         else:
             for i in range(10):
                 for j in range(10):
                     if self.grid[i][j] == 0 and grid[i][j] == 0:
+                        new_grid[i][j] = 0
                         continue
-                    self.grid[i][j] -= grid[i][j]
-        return self.grid
+                    new_grid[i][j] = self.grid[i][j] - grid[i][j]
+        return new_grid
 
 
     @staticmethod
@@ -313,12 +321,12 @@ class Board:
         rows_nships = stdin.readline().strip("\n")
         rows_nships = rows_nships.split("\t")
         rows_nships = rows_nships[1:]
-        rows_nships = (tuple(map(int, rows_nships)))
+        Board.rows_nships = (tuple(map(int, rows_nships)))
 
         cols_nships = stdin.readline().strip("\n")
         cols_nships = cols_nships.split("\t")
         cols_nships = cols_nships[1:]
-        cols_nships = (tuple(map(int, cols_nships)))
+        Board.cols_nships = (tuple(map(int, cols_nships)))
 
         nhints = int(input())
 
@@ -346,6 +354,8 @@ class Bimaru(Problem):
         partir do estado passado como argumento."""
         actions = []
 
+        # Each action is a tuple of 3 elements: either "include" or "exclude",
+        # followed by a grid, followed by the grid's index in all_grids
         for i in range(len(state.board.all_grids)):
             if state.included[i] == 0:
                 actions.append(("include", Board.all_grids[i], i))
@@ -360,15 +370,17 @@ class Bimaru(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         if action[0] == "include":
-            state.board.update_grid(action[1])
-            state.included[action[2]] = 1
+            new_grid = state.board.update_grid(action[1])
+            new_state = BimaruState(new_grid)
+            new_state.included[action[2]] = 1
         else:
-            state.board.update_grid(action[1], include=False)
-            state.included[action[2]] = 0
+            new_grid = state.board.update_grid(action[1], include=False)
+            new_state = BimaruState(new_grid)
+            new_state.included[action[2]] = 0
 
-        # (return solution_grid)
+        return new_state
         """Esta função retorna o state resultante da ação. Temos que criar mais
-        um state e um board e devolver isso (pra poderem voltar pra trás)? E
+        um Board e um State e devolver isso (pra poderem voltar pra trás)? E
         nesse caso, 'update_grid' tem que devolver a nova grid resultante da
         ação ao invés de alterar a grid do Board..."""
         pass
