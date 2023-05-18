@@ -243,7 +243,6 @@ class BimaruState:
         self.board = board
         self.id = BimaruState.state_id
         BimaruState.state_id += 1
-        self.included = [0 for _ in range(len(Board.all_grids))]
 
     def __lt__(self, other):
         return self.id < other.id
@@ -254,18 +253,22 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    rows_nships = []
-    cols_nships = []
+    rows_nships = [] # CAN'T BE CLASS VARIABLE, MAKE IT A SET
+    cols_nships = [] # CAN'T BE CLASS VARIABLE, MAKE IT A SET
 
     all_grids = []
-    no_ships = []
-    hints_pos = []
+    no_ships = [] # MAKE THIS A SET
+    hints_pos = [] # MAKE THIS A SET
 
     # Not sure if this last one is gonna be used
     M = np.array(np.array([[100] * 10 for _ in range(10)]))
 
     def __init__(self, grid):
         self.grid = grid
+    
+    def calculate_state(self):
+        #TODO
+        pass
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -281,6 +284,10 @@ class Board:
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         return (self.get_value(row, col - 1), self.get_value(row, col + 1))
+    
+    def get_values_around(self, row: int, col: int):
+        #TODO
+        pass
     
     def get_row_sum(self, row: int):
         if 0 <= row <= 9:
@@ -305,27 +312,23 @@ class Board:
                 
         return True
     
-    def update_grid(self, grid, include=True):
+    def get_combined_grid(self, grid): # INCOMPLETE!
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
         new_grid = [[0 for _ in range(10)] for _ in range(10)]
         
-        if include:
-            for i in range(10):
-                for j in range(10):
-                    if self.grid[i][j] == 1 and grid[i][j] == 1:
-                        new_grid[i][j] = 1
-                        continue
-                    new_grid[i][j] = self.grid[i][j] + grid[i][j]
-        else:
-            for i in range(10):
-                for j in range(10):
-                    if self.grid[i][j] == 0 and grid[i][j] == 0:
-                        new_grid[i][j] = 0
-                        continue
-                    new_grid[i][j] = self.grid[i][j] - grid[i][j]
+        for i in range(10):
+            for j in range(10):
+                if self.grid[i][j] == 1 and grid[i][j] == 1:
+                    new_grid[i][j] = 1
+                    continue
+                new_grid[i][j] = self.grid[i][j] + grid[i][j]
+        
         return new_grid
 
+    def get_possible_actions(self):
+        #TODO
+        pass
 
     @staticmethod
     def parse_instance():
@@ -372,40 +375,25 @@ class Bimaru(Problem):
         super().__init__(state)
         pass
 
-    def actions(self, state: BimaruState):
+    def actions(self, state: BimaruState): #INCORRECT!
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
         actions = []
 
-        # Each action is a tuple of 3 elements: either "include" or "exclude",
-        # followed by a grid, followed by the grid's index in all_grids
-        for i in range(len(state.board.all_grids)):
-            if state.included[i] == 0:
-                actions.append(("include", Board.all_grids[i], i))
-            elif state.included[i] == 1:
-                actions.append(("exclude", Board.all_grids[i], i))
+        # TODO
         
         return actions
 
-    def result(self, state: BimaruState, action):
+    def result(self, state: BimaruState, action): # INCORRECT!
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        if action[0] == "include":
-            new_grid = state.board.update_grid(action[1])
-            new_state = BimaruState(new_grid)
-            new_state.included[action[2]] = 1
-        else:
-            new_grid = state.board.update_grid(action[1], include=False)
-            new_state = BimaruState(new_grid)
-            new_state.included[action[2]] = 0
+        
+        new_grid = state.board.get_combined_grid(action[1])
+        new_state = BimaruState(new_grid)
 
         return new_state
-        """Esta função retorna o state resultante da ação. Temos que criar mais
-        um Board e um State e devolver isso (pra poderem voltar pra trás)? E
-        nesse caso, 'update_grid' tem que devolver a nova grid resultante da
-        ação ao invés de alterar a grid do Board..."""
         pass
 
     def goal_test(self, state: BimaruState):
@@ -430,5 +418,6 @@ if __name__ == "__main__":
     # Imprimir para o standard output no formato indicado.
 
     board = Board.parse_instance()
+    bimaru = Bimaru(board)
 
     pass
