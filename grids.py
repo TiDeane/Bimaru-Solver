@@ -4,13 +4,13 @@ import sys
 """ --------------------------------------- FUNÇÕES DAS GRIDS --------------------------------------- """
 
 # "defines"
-UNKOWN = -1
+UNKNOWN = -1
 WATER = 0
 LEFT = 1
 RIGHT = 2
 TOP = 3
-MIDDLE = 4
-BOTTOM = 5
+BOTTOM = 4
+MIDDLE = 5
 CENTER = 6
 
 def create_grids_ship1(board):
@@ -19,14 +19,15 @@ def create_grids_ship1(board):
     columnIndex = 0
 
     # poem circle em todas posições onde pode estar na grid
-    # existem no total no maximo 100 cominações diferentes de meter esse ship
+    # existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
         # cria a grid com o barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == CENTER):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == CENTER) and\
+            no_ships[rowIndex][columnIndex] != 1:
 
             grid = [[0] * 10 for _ in range(10)]
-            grid[rowIndex][columnIndex] = 1
+            grid[rowIndex][columnIndex] = CENTER
             grids.append(grid)
 
         # proximo ponto
@@ -49,15 +50,17 @@ def create_grids_ship2_horizontal(board):
     # existem no total no maximo 90 cominações diferentes de meter esse ship na horizontal
     for _ in range(90):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == LEFT) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex][columnIndex+1] != 1:
             
-            if (board[rowIndex][columnIndex + 1] == UNKOWN or
+            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
                 board[rowIndex][columnIndex + 1] == RIGHT):
                 
                 grid = [[0] * 10 for _ in range(10)]
-                grid[rowIndex][columnIndex] = 1
-                grid[rowIndex][columnIndex + 1] = 1
+                grid[rowIndex][columnIndex] = LEFT
+                grid[rowIndex][columnIndex + 1] = RIGHT
                 grids.append(grid)
             else:
                 columnIndex += 1
@@ -82,15 +85,17 @@ def create_grids_ship2_vertical(board):
     # existem no total no maximo 90 cominações diferentes de meter esse ship na vertical
     for _ in range(90):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == TOP) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex+1][columnIndex] != 1:
             
-            if (board[rowIndex + 1][columnIndex] == UNKOWN or
+            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
                 board[rowIndex + 1][columnIndex] == BOTTOM):
                 
                 grid = [[0] * 10 for _ in range(10)]
-                grid[rowIndex][columnIndex] = 1
-                grid[rowIndex + 1][columnIndex] = 1
+                grid[rowIndex][columnIndex] = TOP
+                grid[rowIndex + 1][columnIndex] = BOTTOM
                 grids.append(grid)
             else:
                 rowIndex += 1
@@ -115,19 +120,22 @@ def create_grids_ship3_horizontal(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na horizontal
     for _ in range(80):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == LEFT) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex][columnIndex+1] != 1 and\
+            no_ships[rowIndex][columnIndex+2] != 1:
             
-            if (board[rowIndex][columnIndex + 1] == UNKOWN or
+            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
                 board[rowIndex][columnIndex + 1] == MIDDLE):
                 
-                if (board[rowIndex][columnIndex + 2] == UNKOWN or
+                if (board[rowIndex][columnIndex + 2] == UNKNOWN or
                 board[rowIndex][columnIndex + 2] == RIGHT):
                     
                     grid = [[0] * 10 for _ in range(10)]
-                    grid[rowIndex][columnIndex] = 1
-                    grid[rowIndex][columnIndex + 1] = 1
-                    grid[rowIndex][columnIndex + 2] = 1
+                    grid[rowIndex][columnIndex] = LEFT
+                    grid[rowIndex][columnIndex + 1] = MIDDLE
+                    grid[rowIndex][columnIndex + 2] = RIGHT
                     grids.append(grid)
                 else:
                     columnIndex += 2
@@ -154,19 +162,22 @@ def create_grids_ship3_vertical(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na vertical
     for _ in range(80):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == TOP) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex+1][columnIndex] != 1 and\
+            no_ships[rowIndex+2][columnIndex] != 1:
             
-            if (board[rowIndex + 1][columnIndex] == UNKOWN or
+            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
                 board[rowIndex + 1][columnIndex] == MIDDLE):
 
-                if (board[rowIndex + 2][columnIndex] == UNKOWN or
+                if (board[rowIndex + 2][columnIndex] == UNKNOWN or
                     board[rowIndex + 2][columnIndex] == BOTTOM):
                     
                     grid = [[0] * 10 for _ in range(10)]
-                    grid[rowIndex][columnIndex] = 1
-                    grid[rowIndex + 1][columnIndex] = 1
-                    grid[rowIndex + 2][columnIndex] = 1
+                    grid[rowIndex][columnIndex] = TOP
+                    grid[rowIndex + 1][columnIndex] = MIDDLE
+                    grid[rowIndex + 2][columnIndex] = BOTTOM
                     grids.append(grid)
                 else:
                     rowIndex += 2
@@ -193,23 +204,27 @@ def create_grids_ship4_horizontal(board):
     # existem no total no maximo 70 cominações diferentes de meter esse ship na horizontal
     for _ in range(70):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == LEFT) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex][columnIndex+1] != 1 and\
+            no_ships[rowIndex][columnIndex+2] != 1 and\
+            no_ships[rowIndex][columnIndex+3] != 1:
             
-            if (board[rowIndex][columnIndex + 1] == UNKOWN or
+            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
                 board[rowIndex][columnIndex + 1] == MIDDLE):
 
-                if (board[rowIndex][columnIndex + 2] == UNKOWN or
+                if (board[rowIndex][columnIndex + 2] == UNKNOWN or
                     board[rowIndex][columnIndex + 2] == MIDDLE):
                     
-                    if (board[rowIndex][columnIndex + 3] == UNKOWN or
+                    if (board[rowIndex][columnIndex + 3] == UNKNOWN or
                     board[rowIndex][columnIndex + 3] == RIGHT):
                         
                         grid = [[0] * 10 for _ in range(10)]
-                        grid[rowIndex][columnIndex] = 1
-                        grid[rowIndex][columnIndex + 1] = 1
-                        grid[rowIndex][columnIndex + 2] = 1
-                        grid[rowIndex][columnIndex + 3] = 1
+                        grid[rowIndex][columnIndex] = LEFT
+                        grid[rowIndex][columnIndex + 1] = MIDDLE
+                        grid[rowIndex][columnIndex + 2] = MIDDLE
+                        grid[rowIndex][columnIndex + 3] = RIGHT
                         grids.append(grid)
                     else:
                         columnIndex += 3
@@ -238,23 +253,27 @@ def create_grids_ship4_vertical(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na vertical
     for _ in range(70):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if (board[rowIndex][columnIndex] == UNKNOWN or
+            board[rowIndex][columnIndex] == TOP) and\
+            no_ships[rowIndex][columnIndex] != 1 and\
+            no_ships[rowIndex+1][columnIndex] != 1 and\
+            no_ships[rowIndex+2][columnIndex] != 1 and\
+            no_ships[rowIndex+3][columnIndex] != 1:
             
-            if (board[rowIndex + 1][columnIndex] == UNKOWN or
+            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
                 board[rowIndex + 1][columnIndex] == MIDDLE):
                 
-                if (board[rowIndex + 2][columnIndex] == UNKOWN or
+                if (board[rowIndex + 2][columnIndex] == UNKNOWN or
                     board[rowIndex + 2][columnIndex] == MIDDLE):
                     
-                    if (board[rowIndex + 3][columnIndex] == UNKOWN or
+                    if (board[rowIndex + 3][columnIndex] == UNKNOWN or
                         board[rowIndex + 3][columnIndex] == BOTTOM):
                         
                         grid = [[0] * 10 for _ in range(10)]
-                        grid[rowIndex][columnIndex] = 1
-                        grid[rowIndex + 1][columnIndex] = 1
-                        grid[rowIndex + 2][columnIndex] = 1
-                        grid[rowIndex + 3][columnIndex] = 1
+                        grid[rowIndex][columnIndex] = TOP
+                        grid[rowIndex + 1][columnIndex] = MIDDLE
+                        grid[rowIndex + 2][columnIndex] = MIDDLE
+                        grid[rowIndex + 3][columnIndex] = BOTTOM
                         grids.append(grid)
                     else:
                         rowIndex += 3
@@ -292,36 +311,8 @@ def print_grid(grid):
             print(grid[i][j], end="")
         print()
 
-board1 = [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]
-
-""" UNKOWN = -1, WATER = 0, LEFT = 1, RIGHT = 2, TOP = 3, MIDDLE = 4, BOTTOM = 5, CENTER = 6 """
-board2 = [[-1,  0,  3,  0, -1, -1, -1, -1,  0, -1],
-          [-1,  0, -1,  0, -1, -1, -1, -1,  0, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1,  0, -1],
-          [ 0,  0,  0,  0,  0,  0,  0,  0,  0,  0],
-          [ 1, -1, -1, -1,  0, -1,  0, -1,  0, -1],
-          [ 0,  0, -1, -1, -1,  4, -1, -1,  0, -1],
-          [-1, -1, -1, -1,  0, -1,  0, -1,  0, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1,  0, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1,  0, -1],
-          [-1, -1, -1, -1, -1, -1, -1, -1,  0,  0]]
-
-allGrids = create_grids(board1)
-#print_all_grids(allGrids)
-
-
 """ ---------------------------- AS TUAS FUNÇÕES QUE MANDASTE NO DISCORD ---------------------------- """
 
-allGrids = create_grids()
 no_ships = np.array([[-1] * 10 for _ in range(10)])
 hints_pos = []
 hints_matrix = np.array([[-1] * 10 for _ in range(10)])
@@ -570,11 +561,16 @@ nhints = int(input())
 # Builds the 'no_ship' and 'hints_pos' lists
 interpret_hints(nhints)
 
+allGrids = create_grids(hints_matrix)
+
+print(len(allGrids))
+
 print("position of the hints (ships): ", hints_pos)
 print("hints matrix:\n", hints_matrix)
 print("positions with no ships:\n", no_ships)
 
 print(np.array(allGrids[0]))
+print(np.array(allGrids[150]))
 print(adjacent_horizontal_values(allGrids[0], 0, 0))
 print(can_place_ship(allGrids[0], 0, 0))
 
