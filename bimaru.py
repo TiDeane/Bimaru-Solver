@@ -450,15 +450,19 @@ class Board:
     
     def can_place_ship(self, row: int, col: int):
         """Returns True if a ship can be placed in the given position"""
+        if self.get_int_value(row, col) >= 0:
+            return False
+        
         adj_horizontal = self.adjacent_int_horizontal_values(row, col)
         adj_vertical = self.adjacent_int_vertical_values(row, col)
         diagonals_left = self.adjacent_int_horizontal_values(row, col - 1) 
         diagonals_right = self.adjacent_int_vertical_values(row, col + 1)
 
         for n in range(2): # They are all tuples with 2 values each
-            if adj_horizontal[n] != -1 or adj_vertical[n] != -1 or \
-                diagonals_left[n] != -1 or diagonals_right[n] != -1:
+            if adj_horizontal[n] >= 0 or adj_vertical[n] >= 0 or \
+                diagonals_left[n] >= 0 or diagonals_right[n] >= 0:
                 return False
+        
         return True
     
     def get_row_nships(self, row: int):
