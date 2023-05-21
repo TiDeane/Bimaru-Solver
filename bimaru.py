@@ -475,6 +475,8 @@ class Board:
         """Devolve o valor na respetiva posição da representação do tabuleiro."""
         if 0 <= row <= 9 and 0 <= col <= 9:
             return self.grid[row][col]
+        else:
+            return UNKNOWN
 
     # Não sei se precisa existir, perguntei pra prof
     def get_value(self, row: int, col: int) -> str:
@@ -512,7 +514,7 @@ class Board:
         return (self.get_value(row - 1, col), self.get_value(row + 1, col))
 
     def adjacent_int_horizontal_values(self, row: int, col: int) -> (int, int):
-        """Devolve os valores inteiros imediatamente acima e abaixo,
+        """Devolve os valores inteiros imediatamente à esquerda e à direita,
         respectivamente."""
         return (self.get_int_value(row, col-1), self.get_int_value(row, col+1))
 
@@ -529,12 +531,12 @@ class Board:
         
         adj_horizontal = self.adjacent_int_horizontal_values(row, col)
         adj_vertical = self.adjacent_int_vertical_values(row, col)
-        diagonals_left = self.adjacent_int_horizontal_values(row, col - 1) 
+        diagonals_left = self.adjacent_int_vertical_values(row, col - 1) 
         diagonals_right = self.adjacent_int_vertical_values(row, col + 1)
 
         for n in range(2): # They are all tuples with 2 values each
-            if adj_horizontal[n] >= 0 or adj_vertical[n] >= 0 or \
-                diagonals_left[n] >= 0 or diagonals_right[n] >= 0:
+            if adj_horizontal[n] > 0 or adj_vertical[n] > 0 or \
+                diagonals_left[n] > 0 or diagonals_right[n] > 0:
                 return False
         
         return True
@@ -600,16 +602,16 @@ class Board:
                 
         return True
     
-    def get_combined_grid(self, grid): # NOT TESTED
+    def get_combined_grid(self, grid):
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
         new_grid = [[-1 for _ in range(10)] for _ in range(10)]
         
         for i in range(10):
             for j in range(10):
-                if self.grid[i][j] >= 0 and grid[i][j] == -1:
+                if self.grid[i][j] >= 0 and grid[i][j] == UNKNOWN:
                     new_grid[i][j] = self.grid[i][j]
-                elif self.grid[i][j] == -1 and grid[i][j] >= 0:
+                elif self.grid[i][j] == UNKNOWN and grid[i][j] >= 0:
                     new_grid[i][j] = grid[i][j]
                 else:
                     new_grid[i][j] = self.grid[i][j]
@@ -793,14 +795,14 @@ class Board:
             self.check_close_col(n)
             self.check_close_row(n)
 
-        # print("hints_pos:\n", Board.hints_pos)
+        #print("hints_pos:\n", Board.hints_pos)
         
-        # print("Hints matrix:\n", np.array(hints_matrix))
+        #print("Hints matrix:\n", np.array(hints_matrix))
 
-        # print("Starting grid:\n", np.array(starting_grid))
+        #print("Starting grid:\n", np.array(starting_grid))
 
-        # print("Ships per row: \n", Board.rows_nships)
-        # print("Ships per columnn: \n", Board.cols_nships)
+        #print("Ships per row: \n", Board.rows_nships)
+        #print("Ships per columnn: \n", Board.cols_nships)
 
         create_grids(hints_matrix, self)
 
@@ -834,11 +836,14 @@ class Board:
         starting_board.interpret_hints(nhints)
 
         #print("Number of size 4 horizontal ships: ", len(Board.grids_ship4_hor))
-        #print("Grid 10 of size 4 horizontal:\n", np.array(Board.grids_ship4_hor[10]))
+        #print("Grid 0 of size 4 horizontal:\n", np.array(Board.grids_ship4_hor[0]))
 
-        #print("Combined grid of starting grid and the previous grid:\n", np.array(starting_board.get_combined_grid(Board.grids_ship4_hor[10])))
+        #print("Can you place a ship on (0,0)?", starting_board.can_place_ship(0,0))
+        #print("Can you place a ship on (3,7)?", starting_board.can_place_ship(3,7))
+        #print("Can you place a ship on (4,6)?", starting_board.can_place_ship(4,6))
+        #print("Combined grid of starting grid and the previous grid:\n", np.array(starting_board.get_combined_grid(Board.grids_ship4_hor[0])))
 
-        # print("Number of ships placed of each size:\n", starting_board.nships_of_size)
+        #print("Number of ships placed of each size:\n", starting_board.nships_of_size)
 
         return Board(starting_board)
 
@@ -900,5 +905,7 @@ if __name__ == "__main__":
 
     board = Board.parse_instance()
     bimaru = Bimaru(board)
+    #goal_node = breadth_first_tree_search(bimaru)
+    #print(goal_node)
 
     pass
