@@ -42,7 +42,7 @@ def create_grids_ship1(board):
             board[rowIndex][columnIndex] == CENTER) and\
             Board.no_ships_matrix[rowIndex][columnIndex] != 1:
 
-            grid = [[0] * 10 for _ in range(10)]
+            grid = [[-1] * 10 for _ in range(10)]
             grid[rowIndex][columnIndex] = CENTER
 
             """
@@ -76,6 +76,32 @@ def create_grids_ship2_horizontal(board):
     # poem LEFT RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na horizontal
     for _ in range(90):
+        if Board.rows_nships[rowIndex] < 2:
+            rowIndex += 1
+            columnIndex == 0
+            if rowIndex == 10:
+                break
+            continue
+
+        if Board.cols_nships[columnIndex] < 1:
+            columnIndex += 1
+            if columnIndex >= 9:
+                columnIndex = 0
+                rowIndex += 1
+                # Não existe mais nenhum ponto
+                if rowIndex == 10:
+                    break
+            continue
+        elif Board.cols_nships[columnIndex+1] < 1:
+            columnIndex += 2
+            if columnIndex >= 9:
+                columnIndex = 0
+                rowIndex += 1
+                # Não existe mais nenhum ponto
+                if rowIndex == 10:
+                    break
+            continue
+
         # cria a grid com o barco se for uma posição onde possa haver esse barco
         if (board[rowIndex][columnIndex] == UNKNOWN or
             board[rowIndex][columnIndex] == LEFT) and\
@@ -85,7 +111,7 @@ def create_grids_ship2_horizontal(board):
             if (board[rowIndex][columnIndex + 1] == UNKNOWN or
                 board[rowIndex][columnIndex + 1] == RIGHT):
                 
-                grid = [[0] * 10 for _ in range(10)]
+                grid = [[-1] * 10 for _ in range(10)]
                 grid[rowIndex][columnIndex] = LEFT
                 grid[rowIndex][columnIndex + 1] = RIGHT
 
@@ -133,7 +159,7 @@ def create_grids_ship2_vertical(board):
             if (board[rowIndex + 1][columnIndex] == UNKNOWN or
                 board[rowIndex + 1][columnIndex] == BOTTOM):
                 
-                grid = [[0] * 10 for _ in range(10)]
+                grid = [[-1] * 10 for _ in range(10)]
                 grid[rowIndex][columnIndex] = TOP
                 grid[rowIndex + 1][columnIndex] = BOTTOM
 
@@ -185,7 +211,7 @@ def create_grids_ship3_horizontal(board):
                 if (board[rowIndex][columnIndex + 2] == UNKNOWN or
                 board[rowIndex][columnIndex + 2] == RIGHT):
                     
-                    grid = [[0] * 10 for _ in range(10)]
+                    grid = [[-1] * 10 for _ in range(10)]
                     grid[rowIndex][columnIndex] = LEFT
                     grid[rowIndex][columnIndex + 1] = MIDDLE
                     grid[rowIndex][columnIndex + 2] = RIGHT
@@ -227,7 +253,7 @@ def create_grids_ship3_vertical(board):
                 if (board[rowIndex + 2][columnIndex] == UNKNOWN or
                     board[rowIndex + 2][columnIndex] == BOTTOM):
                     
-                    grid = [[0] * 10 for _ in range(10)]
+                    grid = [[-1] * 10 for _ in range(10)]
                     grid[rowIndex][columnIndex] = TOP
                     grid[rowIndex + 1][columnIndex] = MIDDLE
                     grid[rowIndex + 2][columnIndex] = BOTTOM
@@ -273,7 +299,7 @@ def create_grids_ship4_horizontal(board):
                     if (board[rowIndex][columnIndex + 3] == UNKNOWN or
                     board[rowIndex][columnIndex + 3] == RIGHT):
                         
-                        grid = [[0] * 10 for _ in range(10)]
+                        grid = [[-1] * 10 for _ in range(10)]
                         grid[rowIndex][columnIndex] = LEFT
                         grid[rowIndex][columnIndex + 1] = MIDDLE
                         grid[rowIndex][columnIndex + 2] = MIDDLE
@@ -322,7 +348,7 @@ def create_grids_ship4_vertical(board):
                     if (board[rowIndex + 3][columnIndex] == UNKNOWN or
                         board[rowIndex + 3][columnIndex] == BOTTOM):
                         
-                        grid = [[0] * 10 for _ in range(10)]
+                        grid = [[-1] * 10 for _ in range(10)]
                         grid[rowIndex][columnIndex] = TOP
                         grid[rowIndex + 1][columnIndex] = MIDDLE
                         grid[rowIndex + 2][columnIndex] = MIDDLE
@@ -418,11 +444,27 @@ class Board:
         if 0 <= row <= 9 and 0 <= col <= 9:
             return self.grid[row][col]
 
-    # INCOMPLETE? (perguntei pra prof)
+    # Não sei se precisa existir, perguntei pra prof
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
         if 0 <= row <= 9 and 0 <= col <= 9:
-            return self.grid[row][col]
+            match self.grid[row][col]:
+                case -1:
+                    return "None"
+                case 0:
+                    return "W"
+                case 1:
+                    return "L"
+                case 2:
+                    return "R"
+                case 3:
+                    return "T"
+                case 4:
+                    return "B"
+                case 5:
+                    return "M"
+                case 6:
+                    return "C"
         else:
             return "None"
 
@@ -431,7 +473,7 @@ class Board:
         respectivamente."""
         return (self.get_int_value(row-1, col), self.get_int_value(row+1, col))
 
-    # MAYBE INCOMPLETE (perguntei pra prof)?
+    # Não sei se precisa existir, perguntei pra prof
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
@@ -442,7 +484,7 @@ class Board:
         respectivamente."""
         return (self.get_int_value(row, col-1), self.get_int_value(row, col+1))
 
-    # MAYBE INCOMPLETE (perguntei pra prof)?
+    # Não sei se precisa existir, perguntei pra prof
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
@@ -470,7 +512,7 @@ class Board:
         sum = 0
         if 0 <= row <= 9:
             for col in range(10):
-                if self.grid[row][col] != -1 and self.grid[row][col] != WATER:
+                if self.grid[row][col] >= 0:
                     sum += 1
             return sum
         
@@ -479,7 +521,7 @@ class Board:
         sum = 0
         if 0 <= col <= 9:
             for row in range(10):
-                if self.grid[row][col] != -1 and self.grid[row][col]!= WATER:
+                if self.grid[row][col] >= 0:
                     sum += 1
             return sum
     
@@ -533,11 +575,12 @@ class Board:
         
         for i in range(10):
             for j in range(10):
-                if self.grid[i][j] >= 0 and grid[i][j] >= 0:
-                    new_grid[i][j] = self.grid[i][j] # Shouldn't happen
-                elif self.grid[i][j] == -1 and grid[i][j] > 0 or \
-                        self.grid[i][j] > 0 and grid[i][j] == -1:
+                if self.grid[i][j] >= 0 and grid[i][j] == -1:
+                    new_grid[i][j] = self.grid[i][j]
+                elif self.grid[i][j] == -1 and grid[i][j] >= 0:
                     new_grid[i][j] = grid[i][j]
+                else:
+                    new_grid[i][j] = self.grid[i][j]
         
         return new_grid
 
@@ -755,7 +798,12 @@ class Board:
         starting_board = Board([])
         starting_board.interpret_hints(nhints)
 
-        # print("Starting grid:\n", np.array(starting_board.grid))
+        #print("Starting grid:\n", np.array(starting_board.grid))
+
+        #print("Number of size 4 horizontal ships: ", len(Board.grids_ship4_hor))
+        #print("Grid 10 of size 4 horizontal:\n", np.array(Board.grids_ship4_hor[10]))
+
+        #print("Combined grid of starting grid and the previous grid:\n", np.array(starting_board.get_combined_grid(Board.grids_ship4_hor[10])))
 
         # print("Number of ships placed of each size:\n", starting_board.nships_of_size)
 

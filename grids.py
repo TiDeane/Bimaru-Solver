@@ -345,18 +345,19 @@ def result(solution_grid, action):
 
         return solution_grid
 
-def get_combined_grid(grid1, grid):
+def get_combined_grid(grid1, grid2): # NOT TESTED
         """Combines the grids if include = True and removes "grid" from the
         combination if include = False"""
         new_grid = [[-1 for _ in range(10)] for _ in range(10)]
         
         for i in range(10):
             for j in range(10):
-                if (grid1[i][j] == 1 and grid[i][j] == 1):
-                    new_grid[i][j] = 1
-                elif grid1[i][j] == -1 and grid[i][j] == 1 or \
-                        grid1[i][j] == 1 and grid[i][j] == -1:
-                    new_grid[i][j] = 1
+                if grid1[i][j] >= 0 and grid2[i][j] == -1:
+                    new_grid[i][j] = grid1[i][j]
+                elif grid1[i][j] == -1 and grid2[i][j] >= 0:
+                    new_grid[i][j] = grid2[i][j]
+                else:
+                    new_grid[i][j] = grid1[i][j]
         
         return new_grid
 
@@ -558,7 +559,6 @@ cols_nships = (tuple(map(int, cols_nships)))
 
 nhints = int(input())
 
-# Builds the 'no_ship' and 'hints_pos' lists
 interpret_hints(nhints)
 
 allGrids = create_grids(hints_matrix)
