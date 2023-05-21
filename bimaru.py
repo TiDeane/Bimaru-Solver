@@ -37,6 +37,23 @@ def create_grids_ship1(board):
     # poem circle em todas posições onde pode estar na grid
     # existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
+        if Board.rows_nships[rowIndex] < 1:
+            rowIndex += 1
+            columnIndex == 0
+            if rowIndex == 10:
+                break
+            continue
+
+        if Board.cols_nships[columnIndex] < 1:
+            columnIndex += 1
+            if columnIndex > 9:
+                columnIndex = 0
+                rowIndex += 1
+                # Não existe mais nenhum ponto
+                if rowIndex == 10:
+                    break
+            continue
+        
         # cria a grid com o barco
         if (board[rowIndex][columnIndex] == UNKNOWN or
             board[rowIndex][columnIndex] == CENTER) and\
@@ -147,9 +164,32 @@ def create_grids_ship2_vertical(board):
     rowIndex = 0
     columnIndex = 0
 
-    # poem LEFT RIGHT em todas posições onde pode estar na grid
+    # poem TOP BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na vertical
     for _ in range(90):
+        if Board.rows_nships[rowIndex] < 1:
+            rowIndex += 1
+            columnIndex == 0
+            if rowIndex >= 10:
+                break
+            continue
+        elif Board.rows_nships[rowIndex+1] < 1:
+            rowIndex += 2
+            columnIndex == 0
+            if rowIndex >= 10:
+                break
+            continue
+
+        if Board.cols_nships[columnIndex] < 2:
+            columnIndex += 1
+            if columnIndex >= 9:
+                columnIndex = 0
+                rowIndex += 1
+                # Não existe mais nenhum ponto
+                if rowIndex == 10:
+                    break
+            continue
+
         # cria a grid com o barco se for uma posição onde possa haver esse barco
         if (board[rowIndex][columnIndex] == UNKNOWN or
             board[rowIndex][columnIndex] == TOP) and\
@@ -419,6 +459,7 @@ class Board:
 
     # If (i,j) is 1 cannot be a ship in any grid and 0 otherwise
     # (maybe being a set of numbers that correspond to positions is faster)
+    #TODO DELETE THIS AFTER REFORMING THE SHIP CREATING FUNCTIONS !
     no_ships_matrix = np.array([[-1] * 10 for _ in range(10)])
 
     def __init__(self, grid):
@@ -430,10 +471,6 @@ class Board:
 
         # Index 'i' has the number of ships of size i + 1 placed in this Board's grid
         self.nships_of_size = np.zeros(4, np.uint8)
-
-        # Saves additional positions that cannot be a ship in this Board instance
-        # Maybe we could just put water in all the spots?
-        self.no_ships_pos = set() # 15 = (1,5), 92 = (9,2), etc
     
     def calculate_state(self):
         #TODO
@@ -512,7 +549,7 @@ class Board:
         sum = 0
         if 0 <= row <= 9:
             for col in range(10):
-                if self.grid[row][col] >= 0:
+                if self.grid[row][col] > 0:
                     sum += 1
             return sum
         
@@ -521,7 +558,7 @@ class Board:
         sum = 0
         if 0 <= col <= 9:
             for row in range(10):
-                if self.grid[row][col] >= 0:
+                if self.grid[row][col] > 0:
                     sum += 1
             return sum
     
@@ -609,163 +646,163 @@ class Board:
             match hints_aux[3]:
                 case 'W':
                     hints_matrix[aux[0]][aux[1]] = WATER
-
-                    Board.no_ships_matrix[aux[0]][aux[1]] = 1
+                    starting_grid[aux[0]][aux[1]] = WATER
                 case 'C':
                     hints_matrix[aux[0]][aux[1]] = CENTER
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     # If the hint says there is a submarine in this position,
                     # then we can instantly put it in the starting grid.
-                    # Put water around it? (needs 'if's so it doesn't go out of bounds )
+                    #TODO  Put water around it? (needs 'if's so it doesn't go out of bounds)
                     starting_grid[aux[0]][aux[1]] = CENTER
-                    Board.no_ships_matrix[aux[0]][aux[1]] = 1
                     self.nships_of_size[0] += 1
 
                     if (aux[0]-1) != -1:
                         if (aux[1]-1) != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]-1][aux[1]] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
+                        starting_grid[aux[0]-1][aux[1]] = WATER
                         if (aux[1]+1) != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
 
                     if (aux[1]-1) != -1:
-                        Board.no_ships_matrix[aux[0]][aux[1]-1] = 1
+                        starting_grid[aux[0]][aux[1]-1] = WATER
                     if (aux[1]+1) != 10:
-                        Board.no_ships_matrix[aux[0]][aux[1]+1] = 1
+                        starting_grid[aux[0]][aux[1]+1] = WATER
 
                     if (aux[0]+1) != 10:
                         if (aux[1]-1) != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]+1][aux[1]] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
+                        starting_grid[aux[0]+1][aux[1]] = WATER
                         if (aux[1]+1) != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'T':
                     hints_matrix[aux[0]][aux[1]] = TOP
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]-1][aux[1]] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
+                        starting_grid[aux[0]-1][aux[1]] = WATER
                         if aux[1]+1 != 10: 
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
 
                     if aux[1]-1 != -1:
-                        Board.no_ships_matrix[aux[0]][aux[1]-1] = 1
+                        starting_grid[aux[0]][aux[1]-1] = WATER
                     if aux[1]+1 != 10:
-                        Board.no_ships_matrix[aux[0]][aux[1]+1] = 1
+                        starting_grid[aux[0]][aux[1]+1] = WATER
 
                     if aux[0]+1 != 10:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
                     if aux[0]+2 != 10:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+2][aux[1]-1] = 1
+                            starting_grid[aux[0]+2][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+2][aux[1]+1] = 1
+                            starting_grid[aux[0]+2][aux[1]+1] = WATER
                 case 'M':
                     hints_matrix[aux[0]][aux[1]] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
 
                     if aux[0]+1 != 10:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'B':
                     hints_matrix[aux[0]][aux[1]] = BOTTOM
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-2 != -1:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-2][aux[1]-1] = 1
+                            starting_grid[aux[0]-2][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]-2][aux[1]+1] = 1
+                            starting_grid[aux[0]-2][aux[1]+1] = WATER
 
                     if aux[0]-1 != -1:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
 
                     if aux[1]-1 != -1:
-                        Board.no_ships_matrix[aux[0]][aux[1]-1] = 1
+                        starting_grid[aux[0]][aux[1]-1] = WATER
                     if aux[1]+1 != 10:
-                        Board.no_ships_matrix[aux[0]][aux[1]+1] = 1
+                        starting_grid[aux[0]][aux[1]+1] = WATER
 
                     if aux[0]+1 != 10:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]+1][aux[1]] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
+                        starting_grid[aux[0]+1][aux[1]] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'L':
                     hints_matrix[aux[0]][aux[1]] = LEFT
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]-1][aux[1]] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
+                        starting_grid[aux[0]-1][aux[1]] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
                         if aux[1]+2 != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+2] = 1
+                            starting_grid[aux[0]-1][aux[1]+2] = WATER
 
                     if aux[1]-1 != -1:
-                        Board.no_ships_matrix[aux[0]][aux[1]-1] = 1
+                        starting_grid[aux[0]][aux[1]-1] = WATER
 
                     if aux[0]+1 != 10:
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]+1][aux[1]] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
+                        starting_grid[aux[0]+1][aux[1]] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
                         if aux[1]+2 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+2] = 1
+                            starting_grid[aux[0]+1][aux[1]+2] = WATER
                 case 'R':
                     hints_matrix[aux[0]][aux[1]] = RIGHT
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
                         if aux[1]-2 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-2] = 1
+                            starting_grid[aux[0]-1][aux[1]-2] = WATER
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]-1][aux[1]] = 1
+                            starting_grid[aux[0]-1][aux[1]-1] = WATER
+                        starting_grid[aux[0]-1][aux[1]] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]-1][aux[1]+1] = 1
+                            starting_grid[aux[0]-1][aux[1]+1] = WATER
 
                     if aux[1]+1 != 10:
-                        Board.no_ships_matrix[aux[0]][aux[1]+1] = 1
+                        starting_grid[aux[0]][aux[1]+1] = WATER
 
                     if aux[0]+1 != 10:
                         if aux[1]-2 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-2] = 1
+                            starting_grid[aux[0]+1][aux[1]-2] = WATER
                         if aux[1]-1 != -1:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]-1] = 1
-                        Board.no_ships_matrix[aux[0]+1][aux[1]] = 1
+                            starting_grid[aux[0]+1][aux[1]-1] = WATER
+                        starting_grid[aux[0]+1][aux[1]] = WATER
                         if aux[1]+1 != 10:
-                            Board.no_ships_matrix[aux[0]+1][aux[1]+1] = 1
+                            starting_grid[aux[0]+1][aux[1]+1] = WATER
 
         self.grid = starting_grid
         
         for n in range(10):
             self.check_close_col(n)
             self.check_close_row(n)
-        
-        create_grids(hints_matrix)
 
-        self.grid = starting_grid
+        #print("hints_pos:\n", Board.hints_pos)
+        
+        #print("Hints matrix:\n", np.array(hints_matrix))
+
+        create_grids(hints_matrix)
 
     @staticmethod
     def parse_instance():
@@ -785,13 +822,13 @@ class Board:
         rows_nships = rows_nships.split("\t")
         rows_nships = rows_nships[1:]
         Board.rows_nships = (tuple(map(int, rows_nships)))
-        # print("Ships per row: \n", Board.rows_nships)
+        #print("Ships per row: \n", Board.rows_nships)
 
         cols_nships = stdin.readline().strip("\n")
         cols_nships = cols_nships.split("\t")
         cols_nships = cols_nships[1:]
         Board.cols_nships = (tuple(map(int, cols_nships)))
-        # print("Ships per columnn: \n", Board.cols_nships)
+        #print("Ships per columnn: \n", Board.cols_nships)
 
         nhints = int(input())
 
@@ -800,15 +837,19 @@ class Board:
 
         #print("Starting grid:\n", np.array(starting_board.grid))
 
+        #print("No ships matrix:\n", np.array(Board.no_ships_matrix))
+
+        #for i in range(len(Board.grids_ship2_ver)):
+        #    print(np.array(Board.grids_ship2_ver[i]), "\n")
+
+        #print("Starting grid:\n", np.array(starting_board.grid))
+
         #print("Number of size 4 horizontal ships: ", len(Board.grids_ship4_hor))
         #print("Grid 10 of size 4 horizontal:\n", np.array(Board.grids_ship4_hor[10]))
 
         #print("Combined grid of starting grid and the previous grid:\n", np.array(starting_board.get_combined_grid(Board.grids_ship4_hor[10])))
 
-        # print("Number of ships placed of each size:\n", starting_board.nships_of_size)
-
-        # print("Positions of the hints:\n", Board.hints_pos)
-        # print("Positions that cannot have ships\n", Board.no_ships_matrix)
+        #print("Number of ships placed of each size:\n", starting_board.nships_of_size)
 
         return Board(starting_board)
 
