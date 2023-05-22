@@ -471,68 +471,36 @@ class Board:
         #TODO
         pass
 
-    def get_int_value(self, row: int, col: int) -> int:
+    def get_value(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição da representação do tabuleiro."""
         if 0 <= row <= 9 and 0 <= col <= 9:
             return self.grid[row][col]
         else:
             return UNKNOWN
 
-    # Não sei se precisa existir, perguntei pra prof
-    def get_value(self, row: int, col: int) -> str:
-        """Devolve o valor na respetiva posição do tabuleiro."""
-        if 0 <= row <= 9 and 0 <= col <= 9:
-            match self.grid[row][col]:
-                case -1:
-                    return "None"
-                case 0:
-                    return "W"
-                case 1:
-                    return "L"
-                case 2:
-                    return "R"
-                case 3:
-                    return "T"
-                case 4:
-                    return "B"
-                case 5:
-                    return "M"
-                case 6:
-                    return "C"
-        else:
-            return "None"
-
-    def adjacent_int_vertical_values(self, row: int, col: int) -> (int, int):
+    def adjacent_vertical_values(self, row: int, col: int) -> (int, int):
         """Devolve os valores inteiros imediatamente acima e abaixo,
         respectivamente."""
-        return (self.get_int_value(row-1, col), self.get_int_value(row+1, col))
+        return (self.get_value(row-1, col), self.get_value(row+1, col))
 
-    # Não sei se precisa existir, perguntei pra prof
-    def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
-        """Devolve os valores imediatamente acima e abaixo,
-        respectivamente."""
-        return (self.get_value(row - 1, col), self.get_value(row + 1, col))
-
-    def adjacent_int_horizontal_values(self, row: int, col: int) -> (int, int):
+    def adjacent_horizontal_values(self, row: int, col: int) -> (int, int):
         """Devolve os valores inteiros imediatamente à esquerda e à direita,
         respectivamente."""
-        return (self.get_int_value(row, col-1), self.get_int_value(row, col+1))
-
-    # Não sei se precisa existir, perguntei pra prof
-    def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
-        """Devolve os valores imediatamente à esquerda e à direita,
-        respectivamente."""
-        return (self.get_value(row, col - 1), self.get_value(row, col + 1))
+        return (self.get_value(row, col-1), self.get_value(row, col+1))
     
     def can_place_ship(self, row: int, col: int):
         """Returns True if a ship can be placed in the given position"""
-        if self.get_int_value(row, col) >= 0:
+        if self.get_value(row, col) != UNKNOWN:
             return False
         
-        adj_horizontal = self.adjacent_int_horizontal_values(row, col)
-        adj_vertical = self.adjacent_int_vertical_values(row, col)
-        diagonals_left = self.adjacent_int_vertical_values(row, col - 1) 
-        diagonals_right = self.adjacent_int_vertical_values(row, col + 1)
+        adj_horizontal = self.adjacent_horizontal_values(row, col)
+        #print("Adj_horizontal (%d, %d): %s" % (row, col, adj_horizontal))
+        adj_vertical = self.adjacent_vertical_values(row, col)
+        #print("Adj_vertical (%d, %d): %s" % (row, col, adj_vertical))
+        diagonals_left = self.adjacent_vertical_values(row, col - 1)
+        #print("Diagonals_left (%d, %d): %s" % (row, col, diagonals_left))
+        diagonals_right = self.adjacent_vertical_values(row, col + 1)
+        #print("Diagonals_right (%d, %d): %s" % (row, col, diagonals_right))
 
         for n in range(2): # They are all tuples with 2 values each
             if adj_horizontal[n] > 0 or adj_vertical[n] > 0 or \
@@ -817,7 +785,6 @@ class Board:
             > from sys import stdin
             > line = stdin.readline().split()
         """
-        # TODO
 
         from sys import stdin
         rows_nships = stdin.readline().strip("\n")
@@ -849,7 +816,7 @@ class Board:
 
     def __str__(self): #TODO
         """When printing a class, this function gets called.
-        Make it print the grid's representation, please"""
+        #TODO Make it print the grid's representation, please"""
         pass
 
 
