@@ -457,15 +457,18 @@ class Board:
     grids_ship4_hor = []
     grids_ship4_ver = []
 
-    def __init__(self, grid):
+    def __init__(self, grid, nships_of_size):
         self.grid = grid
 
         # Saves which rows and columns are complete in this Board instance
         self.complete_rows = set()
         self.complete_cols = set()
 
-        # Index 'i' has the number of ships of size i + 1 placed in this Board's grid
-        self.nships_of_size = np.zeros(4, np.uint8)
+        # Index 'i' has the number of ships of size i+1 placed in this Board's grid
+        if nships_of_size == []:
+            self.nships_of_size = np.zeros(4, np.uint8)
+        else:
+            self.nships_of_size = nships_of_size
     
     def calculate_state(self):
         #TODO
@@ -564,7 +567,7 @@ class Board:
             if self.grid[pos[0]][pos[1]] == 0 or self.grid[pos[0]][pos[1]] == -1:
                 return False
         
-        if self.nships_of_size[0] != 4 or self.nships_of_size[1] == 3 or\
+        if self.nships_of_size[0] != 4 or self.nships_of_size[1] != 3 or\
             self.nships_of_size[2] != 2 or self.nships_of_size[3] != 1:
             return False
                 
@@ -588,7 +591,62 @@ class Board:
 
     def get_possible_actions(self):
         #TODO
-        pass
+        actions = []
+
+        if self.nships_of_size[3] == 0: # We need 1 ship of size 4 placed
+
+            hor_positions = []
+            ver_positions = []
+
+            for rowIndex in range(10):
+                for colIndex in range(10):
+                    if colIndex <= 6 and self.can_place_ship(rowIndex, colIndex)\
+                            and self.can_place_ship(rowIndex, colIndex+1)\
+                            and self.can_place_ship(rowIndex, colIndex+2)\
+                            and self.can_place_ship(rowIndex, colIndex+3):
+                        hor_positions.append((rowIndex,colIndex))
+
+                    if rowIndex <= 6 and self.can_place_ship(rowIndex, colIndex)\
+                            and self.can_place_ship(rowIndex+1, colIndex)\
+                            and self.can_place_ship(rowIndex+2, colIndex)\
+                            and self.can_place_ship(rowIndex+3, colIndex):
+                        ver_positions.append((rowIndex,colIndex))
+
+            for i in range(len(Board.grids_ship4_hor)):
+                for pos in hor_positions:
+                    if Board.grids_ship4_hor[i][pos[0]][pos[1]] == LEFT\
+                            and Board.grids_ship4_hor[i][pos[0]][pos[1]+1] == MIDDLE\
+                            and Board.grids_ship4_hor[i][pos[0]][pos[1]+2] == MIDDLE\
+                            and Board.grids_ship4_hor[i][pos[0]][pos[1]+3] == RIGHT:
+                        actions.append((Board.grids_ship4_hor[i], (pos[0], pos[1])))
+            for i in range(len(Board.grids_ship4_ver)):
+                for pos in ver_positions:
+                    if Board.grids_ship4_ver[i][pos[0]][pos[1]] == TOP\
+                            and Board.grids_ship4_ver[i][pos[0]+1][pos[1]] == MIDDLE\
+                            and Board.grids_ship4_ver[i][pos[0]+2][pos[1]] == MIDDLE\
+                            and Board.grids_ship4_ver[i][pos[0]+3][pos[1]] == BOTTOM:
+                        actions.append((Board.grids_ship4_ver[i], (pos[0], pos[1])))
+
+            return actions
+        elif self.nships_of_size[2] <= 1: # We need 2 ships of size 3 placed
+            # search for all positions for a ship of size 3
+            # iterate through the grids and check if any of those positions (and the next 2) are occupied (the ship is there)
+            # add those grids
+            # do this for horizontal and then for vertical
+            return actions
+        elif self.nships_of_size[1] <= 2: # We need 3 ships of size 2 placed
+            # search for all positions for a ship of size 2
+            # iterate through the grids and check if any of those positions (and the next one) are occupied (the ship is there)
+            # add those grids
+            # do this for horizontal and then for vertical
+            return actions
+        elif self.nships_of_size[0] <= 3: # We need 4 ships of size 1 placed
+            # search for all positions for a ship of size 1
+            # iterate through the grids and check if any of those positions are occupied (the ship is there)
+            # add those grids
+            return actions
+        else:
+            return []
 
     def interpret_hints(self, nhints: int):
         """Interprets the given hints and does the following things:
@@ -642,6 +700,7 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'T':
                     hints_matrix[aux[0]][aux[1]] = TOP
+                    hints_matrix[aux[0]+1][aux[1]] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -683,6 +742,7 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'B':
                     hints_matrix[aux[0]][aux[1]] = BOTTOM
+                    hints_matrix[aux[0]-1][aux[1]] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-2 != -1:
@@ -710,6 +770,7 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'L':
                     hints_matrix[aux[0]][aux[1]] = LEFT
+                    hints_matrix[aux[0]][aux[1]+1] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -734,6 +795,7 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+2] = WATER
                 case 'R':
                     hints_matrix[aux[0]][aux[1]] = RIGHT
+                    hints_matrix[aux[0]][aux[1]-1] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -799,7 +861,7 @@ class Board:
 
         nhints = int(input())
 
-        starting_board = Board([])
+        starting_board = Board([], [])
         starting_board.interpret_hints(nhints)
 
         #print("Number of size 4 horizontal ships: ", len(Board.grids_ship4_hor))
@@ -812,7 +874,7 @@ class Board:
 
         #print("Number of ships placed of each size:\n", starting_board.nships_of_size)
 
-        return Board(starting_board)
+        return starting_board
 
     def __str__(self): #TODO
         """When printing a class, this function gets called.
