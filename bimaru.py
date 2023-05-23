@@ -469,10 +469,6 @@ class Board:
             self.nships_of_size = np.zeros(4, np.uint8)
         else:
             self.nships_of_size = nships_of_size
-    
-    def calculate_state(self):
-        #TODO
-        pass
 
     def get_value(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição da representação do tabuleiro."""
@@ -497,13 +493,9 @@ class Board:
             return False
         
         adj_horizontal = self.adjacent_horizontal_values(row, col)
-        #print("Adj_horizontal (%d, %d): %s" % (row, col, adj_horizontal))
         adj_vertical = self.adjacent_vertical_values(row, col)
-        #print("Adj_vertical (%d, %d): %s" % (row, col, adj_vertical))
         diagonals_left = self.adjacent_vertical_values(row, col - 1)
-        #print("Diagonals_left (%d, %d): %s" % (row, col, diagonals_left))
         diagonals_right = self.adjacent_vertical_values(row, col + 1)
-        #print("Diagonals_right (%d, %d): %s" % (row, col, diagonals_right))
 
         for n in range(2): # They are all tuples with 2 values each
             if adj_horizontal[n] > 0 or adj_vertical[n] > 0 or \
@@ -564,7 +556,7 @@ class Board:
         # Maybe hints_matrix could be used for this? (to know what type of ship piece)
         # Try if there's enough memory available
         for pos in self.hints_pos:
-            if self.grid[pos[0]][pos[1]] == 0 or self.grid[pos[0]][pos[1]] == -1:
+            if self.grid[pos[0]][pos[1]] <= 0:
                 return False
         
         if self.nships_of_size[0] != 4 or self.nships_of_size[1] != 3 or\
@@ -574,9 +566,9 @@ class Board:
         return True
     
     def get_combined_grid(self, grid):
-        """Combines the grids if include = True and removes "grid" from the
-        combination if include = False"""
-        new_grid = [[-1 for _ in range(10)] for _ in range(10)]
+        """Returns a new grid that is the combination of this Board's grid
+        with the grid given as argument"""
+        new_grid = [[UNKNOWN for _ in range(10)] for _ in range(10)]
         
         for i in range(10):
             for j in range(10):
@@ -593,10 +585,10 @@ class Board:
         #TODO
         actions = []
 
-        if self.nships_of_size[3] == 0: # We need 1 ship of size 4 placed
+        hor_positions = []
+        ver_positions = []
 
-            hor_positions = []
-            ver_positions = []
+        if self.nships_of_size[3] == 0: # We need 1 ship of size 4 placed
 
             for rowIndex in range(10):
                 for colIndex in range(10):
@@ -618,14 +610,14 @@ class Board:
                             and Board.grids_ship4_hor[i][pos[0]][pos[1]+1] == MIDDLE\
                             and Board.grids_ship4_hor[i][pos[0]][pos[1]+2] == MIDDLE\
                             and Board.grids_ship4_hor[i][pos[0]][pos[1]+3] == RIGHT:
-                        actions.append((Board.grids_ship4_hor[i], (pos[0], pos[1])))
+                        actions.append((Board.grids_ship4_hor[i], 4))
             for i in range(len(Board.grids_ship4_ver)):
                 for pos in ver_positions:
                     if Board.grids_ship4_ver[i][pos[0]][pos[1]] == TOP\
                             and Board.grids_ship4_ver[i][pos[0]+1][pos[1]] == MIDDLE\
                             and Board.grids_ship4_ver[i][pos[0]+2][pos[1]] == MIDDLE\
                             and Board.grids_ship4_ver[i][pos[0]+3][pos[1]] == BOTTOM:
-                        actions.append((Board.grids_ship4_ver[i], (pos[0], pos[1])))
+                        actions.append((Board.grids_ship4_ver[i], 4))
 
             return actions
         elif self.nships_of_size[2] <= 1: # We need 2 ships of size 3 placed
@@ -653,11 +645,11 @@ class Board:
         - Creates the puzzle's starting grid
         - Places any ships of size 1 given in the hints in the starting grid
         - Places water around those ships of size 1
-        - Puts water on the necessary positions depending on the given hint
+        - Reading the hints, puts water on the necessary positions
         - Checks if any rows or columns have already been completed. If so, adds
-        them to the corresponding sets and fills the remaining spots with water"""
-        # OBSERVAÇÃO: talvez hints_matrix seja completamente desnecessário,
-        # mas talvez não só seja necessário como tenha que ser variável de classe
+        them to the corresponding sets and fills the remaining spots with water
+        - Creates all possible grids to be added to the starting grid"""
+
         hints_matrix = np.array([[-1] * 10 for _ in range(10)])
         starting_grid = [[-1 for _ in range(10)] for _ in range(10)]
 
@@ -864,16 +856,6 @@ class Board:
         starting_board = Board([], [])
         starting_board.interpret_hints(nhints)
 
-        #print("Number of size 4 horizontal ships: ", len(Board.grids_ship4_hor))
-        #print("Grid 0 of size 4 horizontal:\n", np.array(Board.grids_ship4_hor[0]))
-
-        #print("Can you place a ship on (0,0)?", starting_board.can_place_ship(0,0))
-        #print("Can you place a ship on (3,7)?", starting_board.can_place_ship(3,7))
-        #print("Can you place a ship on (4,6)?", starting_board.can_place_ship(4,6))
-        #print("Combined grid of starting grid and the previous grid:\n", np.array(starting_board.get_combined_grid(Board.grids_ship4_hor[0])))
-
-        #print("Number of ships placed of each size:\n", starting_board.nships_of_size)
-
         return starting_board
 
     def __str__(self): #TODO
@@ -888,28 +870,25 @@ class Bimaru(Problem):
         # TODO
         state = BimaruState(board)
         super().__init__(state)
-        pass
 
-    def actions(self, state: BimaruState): #INCORRECT!
+    def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        actions = []
+        return state.board.get_possible_actions()
 
-        # TODO
-        
-        return actions
-
-    def result(self, state: BimaruState, action): # INCORRECT!
+    def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        
-        new_grid = state.board.get_combined_grid(action[1])
-        new_state = BimaruState(new_grid)
+        #TODO
+
+        new_grid = state.board.get_combined_grid(action[0])
+        new_board = Board(new_grid, state.board.nships_of_size)
+        new_state = BimaruState(new_board)
+        new_state.board.nships_of_size[action[1]-1] += 1
 
         return new_state
-        pass
 
     def goal_test(self, state: BimaruState):
         """Retorna True se e só se o estado passado como argumento é
@@ -919,8 +898,9 @@ class Bimaru(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # TODO
-        pass
+        # Quantos barcos falta colocar? Exemplo:
+        return 10 - sum(self.nships_of_size)
+        # return sum(self.nships_of_size), se darem prioridade ao maior número
 
     # TODO: outros metodos da classe
 
