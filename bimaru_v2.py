@@ -596,7 +596,7 @@ class Board:
         if len(ships_placed_cols) == 0:
             self.ships_placed_cols = np.zeros(10, np.uint8)
         else:
-            self.ships_placed_cols = np.zeros(10, np.uint8)
+            self.ships_placed_cols = ships_placed_cols
 
         # Index 'i' has the number of ships of size i+1 placed in this Board's grid
         if len(nships_of_size) == 0:
@@ -753,16 +753,19 @@ class Board:
     
     def check_objective(self):
         """Returns True if the Board's grid is the puzzle's solution"""
+        print(self.ships_placed_rows)
+        print(Board.rows_nships)
+        print(self.ships_placed_cols)
+        print(Board.cols_nships)
         for n in range(10):
-            if n not in self.complete_rows or n not in self.complete_cols:
-                print("returning False in if 1")
+            if self.ships_placed_rows[n] != Board.rows_nships[n] or\
+                    self.ships_placed_cols[n] != Board.cols_nships[n]:
                 return False
             
         # Maybe hints_matrix could be used for this? (to know what type of ship piece)
         # Try if there's enough memory available
         for pos in self.hints_pos:
             if self.grid[pos[0]][pos[1]] == -1: # Hint position is water or unknown
-                print("returning False in if 2")
                 return False
         
         if self.nships_of_size[0] != 4 or self.nships_of_size[1] != 3 or\
@@ -1245,7 +1248,7 @@ class Bimaru(Problem):
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_rows[row+1] += 1
                     new_board.ships_placed_rows[row+2] += 1
-                    new_board.ships_placed_cols[col] += 4
+                    new_board.ships_placed_cols[col] += 3
 
                     new_board.check_close_row(row)
                     new_board.check_close_row(row+1)
@@ -1254,14 +1257,14 @@ class Bimaru(Problem):
                 case 2:
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_rows[row+1] += 1
-                    new_board.ships_placed_cols[col] += 4
+                    new_board.ships_placed_cols[col] += 2
 
                     new_board.check_close_row(row)
                     new_board.check_close_row(row+1)
                     new_board.check_close_col(col)
                 case 1:
                     new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_cols[col] += 4
+                    new_board.ships_placed_cols[col] += 1
 
                     new_board.check_close_row(row)
                     new_board.check_close_col(col)
@@ -1293,7 +1296,7 @@ if __name__ == "__main__":
 
     board = Board.parse_instance()
     bimaru = Bimaru(board)
-    #goal_node = breadth_first_tree_search(bimaru)
+    #goal_node = depth_first_tree_search(bimaru)
     #print(goal_node.state.board)
 
     s1 = BimaruState(board)
@@ -1311,7 +1314,7 @@ if __name__ == "__main__":
     print(s4.board)
     actions = s4.board.get_possible_actions()
     print(actions)
-    s5 = bimaru.result(s4, actions[1])
+    s5 = bimaru.result(s4, actions[2])
     print(s5.board)
     actions = s5.board.get_possible_actions()
     print(actions)
@@ -1319,7 +1322,7 @@ if __name__ == "__main__":
     print(s6.board)
     actions = s6.board.get_possible_actions()
     print(actions)
-    s7 = bimaru.result(s6, actions[1])
+    s7 = bimaru.result(s6, actions[0])
     print(s7.board)
     actions = s7.board.get_possible_actions()
     print(actions)
@@ -1327,14 +1330,11 @@ if __name__ == "__main__":
     print(s8.board)
     actions = s8.board.get_possible_actions()
     print(actions)
-    s9 = bimaru.result(s8, actions[1])
+    s9 = bimaru.result(s8, actions[0])
     print(s9.board)
     actions = s9.board.get_possible_actions()
     print(actions)
 
     print(s9.board.check_objective())
-
-    print(s9.board.ships_placed_rows)
-    print(Board.rows_nships)
 
     pass
