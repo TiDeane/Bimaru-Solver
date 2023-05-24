@@ -37,14 +37,14 @@ def create_grids_ship1(hints, starting_board):
     # poem circle em todas posições onde pode estar na grid
     # existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
-        if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 1: # second condition is redundant?
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
             rowIndex += 1
             columnIndex = 0
             if rowIndex == 10:
                 break
             continue
 
-        if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 1: # second condition is redundant?
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
             columnIndex += 1
             if columnIndex == 10:
                 columnIndex = 0
@@ -82,7 +82,8 @@ def create_grids_ship2_horizontal(hints, starting_board):
     # poem LEFT RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na horizontal
     for _ in range(90):
-        if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 2\
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]\
+                or Board.rows_nships[rowIndex] < 2\
                 or starting_board.ships_placed_rows[rowIndex] + 2 > Board.rows_nships[rowIndex]:
             columnIndex += 1
             if columnIndex >= 9:
@@ -92,7 +93,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                     break
             continue
 
-        if columnIndex in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
             columnIndex += 1
             if columnIndex >= 9:
                 columnIndex = 0
@@ -101,7 +102,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+1) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
             columnIndex += 2
             if columnIndex >= 9:
                 columnIndex = 0
@@ -145,7 +146,8 @@ def create_grids_ship2_vertical(hints, starting_board):
     # poem TOP BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na vertical
     for _ in range(90):
-        if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 2\
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]\
+                or Board.cols_nships[columnIndex] < 2\
                 or starting_board.ships_placed_cols[columnIndex] + 2 > Board.cols_nships[columnIndex]:
             columnIndex += 1
             rowIndex = 0
@@ -154,7 +156,7 @@ def create_grids_ship2_vertical(hints, starting_board):
                 break
             continue
         
-        if rowIndex in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
             rowIndex += 1
             if rowIndex >= 9:
                 rowIndex = 0
@@ -163,7 +165,7 @@ def create_grids_ship2_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+1 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
             rowIndex += 2
             if rowIndex >= 9:
                 rowIndex = 0
@@ -207,7 +209,8 @@ def create_grids_ship3_horizontal(hints, starting_board):
     # poem LEFT MIDDLE RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na horizontal
     for _ in range(80):
-        if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 3\
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]\
+                or Board.rows_nships[rowIndex] < 3\
                 or starting_board.ships_placed_rows[rowIndex] + 3 > Board.rows_nships[rowIndex]:
             rowIndex += 1
             columnIndex = 0
@@ -215,7 +218,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                 break
             continue
 
-        if columnIndex in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
             columnIndex += 1
             if columnIndex >= 8:
                 columnIndex = 0
@@ -224,7 +227,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+1) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
             columnIndex += 2
             if columnIndex >= 8:
                 columnIndex = 0
@@ -233,7 +236,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+2) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+2] == Board.cols_nships[columnIndex+2]:
             columnIndex += 3
             if columnIndex >= 8:
                 columnIndex = 0
@@ -283,15 +286,16 @@ def create_grids_ship3_vertical(hints, starting_board):
     # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
     for _ in range(80):
-        if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 3\
-                or starting_board.ships_placed_cols[columnIndex] + 3 > Board.cols_nships[columnIndex]:
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]\
+                or Board.cols_nships[columnIndex] < 3\
+                or starting_board.ships_placed_cols[columnIndex]+3 > Board.cols_nships[columnIndex]:
             columnIndex += 1
             rowIndex = 0
             if columnIndex == 10:
                 break
             continue
 
-        if rowIndex in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
             rowIndex += 1
             if rowIndex >= 8:
                 rowIndex = 0
@@ -300,7 +304,7 @@ def create_grids_ship3_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+1 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
             rowIndex += 2
             if rowIndex >= 8:
                 rowIndex = 0
@@ -309,7 +313,7 @@ def create_grids_ship3_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+2 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+2] == Board.rows_nships[rowIndex+2]:
             rowIndex += 3
             if rowIndex >= 8:
                 rowIndex = 0
@@ -359,7 +363,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
     # poem LEFT MIDDLE MIDDLE RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 70 combinações diferentes de meter esse ship na horizontal
     for _ in range(70):
-        if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 4\
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex] or Board.rows_nships[rowIndex] < 4\
                 or starting_board.ships_placed_rows[rowIndex] + 4 > Board.rows_nships[rowIndex]:
             rowIndex += 1
             columnIndex = 0
@@ -367,7 +371,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                 break
             continue
 
-        if columnIndex in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
             columnIndex += 1
             if columnIndex >= 7:
                 columnIndex = 0
@@ -376,7 +380,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+1) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
             columnIndex += 2
             if columnIndex >= 7:
                 columnIndex = 0
@@ -385,7 +389,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+2) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+2] == Board.cols_nships[columnIndex+2]:
             columnIndex += 3
             if columnIndex >= 7:
                 columnIndex = 0
@@ -394,7 +398,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+3) in starting_board.complete_cols:
+        if starting_board.ships_placed_cols[columnIndex+3] == Board.cols_nships[columnIndex+3]:
             columnIndex += 4
             if columnIndex >= 7:
                 columnIndex = 0
@@ -450,7 +454,7 @@ def create_grids_ship4_vertical(hints, starting_board):
     # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
     for _ in range(70):
-        if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 4\
+        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex] or Board.cols_nships[columnIndex] < 4\
                 or starting_board.ships_placed_cols[columnIndex] + 4 > Board.cols_nships[columnIndex]:
             columnIndex += 1
             if columnIndex == 10:
@@ -461,7 +465,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                     break
             continue
 
-        if rowIndex in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
             rowIndex += 1
             if rowIndex >= 7:
                 rowIndex = 0
@@ -470,7 +474,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+1 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
             rowIndex += 2
             if rowIndex >= 7:
                 rowIndex = 0
@@ -479,7 +483,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+2 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+2] == Board.rows_nships[rowIndex+2]:
             rowIndex += 3
             if rowIndex >= 7:
                 rowIndex = 0
@@ -488,7 +492,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+3 in starting_board.complete_rows:
+        if starting_board.ships_placed_rows[rowIndex+3] == Board.rows_nships[rowIndex+3]:
             rowIndex += 4
             if rowIndex >= 7:
                 rowIndex = 0
@@ -584,10 +588,6 @@ class Board:
     def __init__(self, grid, nships_of_size, ships_placed_rows, ships_placed_cols):
         self.grid = grid
 
-        # Saves which rows and columns are complete in this Board instance
-        self.complete_rows = set()
-        self.complete_cols = set()
-
         if len(ships_placed_rows) == 0:
             self.ships_placed_rows = np.zeros(10, np.uint8)
         else:
@@ -638,8 +638,9 @@ class Board:
 
     def can_place_ship1(self, row: int, col: int):
         """Returns True if a size 1 ship can be placed in the given position"""
-        if self.get_value(row, col) != UNKNOWN or row in self.complete_rows\
-                or col in self.complete_cols:
+        if self.get_value(row, col) != UNKNOWN or\
+                self.ships_placed_rows[row] == Board.rows_nships[row] or\
+                self.ships_placed_cols[col] == Board.cols_nships[col]:
             return False
         
         return self.no_ships_around(row, col)
@@ -647,8 +648,9 @@ class Board:
     def can_place_ship2_h(self, row: int, col: int):
         """Returns True if horizontal size 2 a ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row, col+1) != UNKNOWN\
-                or row in self.complete_rows or col in self.complete_cols or\
-                col+1 in self.complete_cols or\
+                or self.ships_placed_rows[row] == Board.rows_nships[row] or\
+                self.ships_placed_cols[col] == Board.cols_nships[col] or\
+                self.ships_placed_cols[col+1] == Board.cols_nships[col+1] or\
                 self.ships_placed_rows[row]+2 > Board.rows_nships[row]:
             return False
         
@@ -657,9 +659,10 @@ class Board:
     def can_place_ship2_v(self, row: int, col: int):
         """Returns True if vertical size 2a ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row+1, col) != UNKNOWN\
-                or row in self.complete_rows or row+1 in self.complete_rows or\
-                col in self.complete_cols or\
-                self.ships_placed_cols[col]+2 > Board.cols_nships[col]:
+                or self.ships_placed_rows[row] == Board.rows_nships[row]\
+                or self.ships_placed_rows[row+1] == Board.rows_nships[row+1]\
+                or self.ships_placed_cols[col] == Board.cols_nships[col]\
+                or self.ships_placed_cols[col]+2 > Board.cols_nships[col]:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row+1, col)
@@ -667,9 +670,12 @@ class Board:
     def can_place_ship3_h(self, row: int, col: int):
         """Returns True if a horizontal size 3 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row, col+1) != UNKNOWN\
-                or self.get_value(row, col+2) != UNKNOWN or row in self.complete_rows\
-                or col in self.complete_cols or col+1 in self.complete_cols or\
-                col+2 in self.complete_cols or self.ships_placed_rows[row]+3 > Board.rows_nships[row]:
+                or self.get_value(row, col+2) != UNKNOWN\
+                or self.ships_placed_rows[row] == Board.rows_nships[row]\
+                or self.ships_placed_cols[col] == Board.cols_nships[col]\
+                or self.ships_placed_cols[col+1] == Board.cols_nships[col+1]\
+                or self.ships_placed_cols[col+2] == Board.cols_nships[col+2]\
+                or self.ships_placed_rows[row]+3 > Board.rows_nships[row]:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row, col+1) and self.no_ships_around(row, col+2)
@@ -677,9 +683,12 @@ class Board:
     def can_place_ship3_v(self, row: int, col: int):
         """Returns True if a vertical size 3 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row+1, col) != UNKNOWN\
-                or self.get_value(row+2, col) != UNKNOWN or row in self.complete_rows\
-                or row+1 in self.complete_rows or row+2 in self.complete_rows or\
-                col in self.complete_cols or self.ships_placed_cols[col]+3 > Board.cols_nships[col]:
+                or self.get_value(row+2, col) != UNKNOWN\
+                or self.ships_placed_rows[row] == Board.rows_nships[row]\
+                or self.ships_placed_rows[row+1] == Board.rows_nships[row+1]\
+                or self.ships_placed_rows[row+2] == Board.rows_nships[row+2]\
+                or self.ships_placed_cols[col] == Board.cols_nships[col]\
+                or self.ships_placed_cols[col]+3 > Board.cols_nships[col]:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row+1, col) and self.no_ships_around(row+2, col)
@@ -687,10 +696,14 @@ class Board:
     def can_place_ship4_h(self, row: int, col: int):
         """Returns True if a horizontal size 3 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row, col+1) != UNKNOWN\
-                or self.get_value(row, col+2) != UNKNOWN or self.get_value(row, col+3) != UNKNOWN\
-                or row in self.complete_rows or col in self.complete_cols or\
-                col+1 in self.complete_cols or col+2 in self.complete_cols or\
-                col+3 in self.complete_cols or self.ships_placed_rows[row]+4 > Board.rows_nships[row]:
+                or self.get_value(row, col+2) != UNKNOWN\
+                or self.get_value(row, col+3) != UNKNOWN\
+                or self.ships_placed_rows[row] == Board.rows_nships[row]\
+                or self.ships_placed_cols[col] == Board.cols_nships[col]\
+                or self.ships_placed_cols[col+1] == Board.cols_nships[col+1]\
+                or self.ships_placed_cols[col+2] == Board.cols_nships[col+2]\
+                or self.ships_placed_cols[col+3] == Board.cols_nships[col+3]\
+                or self.ships_placed_rows[row]+4 > Board.rows_nships[row]:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row, col+1)\
@@ -699,10 +712,14 @@ class Board:
     def can_place_ship4_v(self, row: int, col: int):
         """Returns True if a vertical size 3 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row+1, col) != UNKNOWN\
-                or self.get_value(row+2, col) != UNKNOWN or self.get_value(row+3, col) != UNKNOWN\
-                or row in self.complete_rows or col in self.complete_cols or\
-                row+1 in self.complete_rows or row+2 in self.complete_rows or\
-                row+3 in self.complete_rows or self.ships_placed_cols[col]+4 > Board.cols_nships[col]:
+                or self.get_value(row+2, col) != UNKNOWN\
+                or self.get_value(row+3, col) != UNKNOWN\
+                or self.ships_placed_rows[row] == Board.rows_nships[row]\
+                or self.ships_placed_cols[col] == Board.cols_nships[col]\
+                or self.ships_placed_rows[row+1] == Board.rows_nships[row+1]\
+                or self.ships_placed_rows[row+2] == Board.rows_nships[row+2]\
+                or self.ships_placed_rows[row+3] == Board.rows_nships[row+3]\
+                or self.ships_placed_cols[col]+4 > Board.cols_nships[col]:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row+1, col)\
@@ -724,32 +741,7 @@ class Board:
             for row in range(10):
                 if self.grid[row][col] > 0:
                     sum += 1
-            return sum
-    
-    def check_close_row(self, row: int):
-        """Returns True if the row is complete and False otherwise. If True, it
-        also fills the remaining spots with water and adds the row to the
-        'complete_rows' set"""
-        if 0 <= row <= 9 and self.ships_placed_rows[row] == Board.rows_nships[row]:
-            for col in range(10):
-                if self.grid[row][col] == -1:
-                    self.grid[row][col] = WATER
-            self.complete_rows.add(row)
-            return True
-        return False
-    
-    def check_close_col(self, col: int):
-        """Returns True if the column is complete and False otherwise. If True,
-        it also fills the remaining spots with water and adds the column to the
-        'complete_columns' set"""
-        if 0 <= col <= 9 and self.ships_placed_cols[col] == Board.cols_nships[col]:
-            for row in range(10):
-                if self.grid[row][col] == -1:
-                    self.grid[row][col] = WATER
-            self.complete_cols.add(col)
-            return True
-        return False
-            
+            return sum         
     
     def check_objective(self):
         """Returns True if the Board's grid is the puzzle's solution"""
@@ -1047,10 +1039,6 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
 
         self.grid = starting_grid
-        
-        for n in range(10):
-            self.check_close_col(n)
-            self.check_close_row(n)
 
         print("hints_pos:\n", Board.hints_pos)
         
@@ -1058,9 +1046,6 @@ class Board:
 
         print("Starting grid:\n", np.array(self.grid))
         print("Starting grid:\n", self)
-
-        print("Ships per row: \n", Board.rows_nships)
-        print("Ships per columnn: \n", Board.cols_nships)
 
         create_grids(hints_matrix, self)
 
@@ -1091,11 +1076,6 @@ class Board:
 
         starting_board = Board([], [], [], [])
         starting_board.interpret_hints(nhints)
-
-        #print(len(Board.grids_ship3_ver))
-        #for i in range(len(Board.grids_ship3_ver)):
-        #    print(Board.grids_ship3_ver[i])
-        #    print(starting_board.can_place_ship3_v(Board.grids_ship3_ver[i][0][0], Board.grids_ship3_ver[i][0][1]))
 
         return starting_board
 
@@ -1195,12 +1175,6 @@ class Bimaru(Problem):
                     new_board.ships_placed_cols[col+1] += 1
                     new_board.ships_placed_cols[col+2] += 1
                     new_board.ships_placed_cols[col+3] += 1
-
-                    new_board.check_close_row(row)
-                    new_board.check_close_col(col)
-                    new_board.check_close_col(col+1)
-                    new_board.check_close_col(col+2)
-                    new_board.check_close_col(col+3)
                     
                 case 3:
                     new_board.ships_placed_rows[row] += 3
@@ -1208,67 +1182,38 @@ class Bimaru(Problem):
                     new_board.ships_placed_cols[col+1] += 1
                     new_board.ships_placed_cols[col+2] += 1
 
-                    new_board.check_close_row(row)
-                    new_board.check_close_col(col)
-                    new_board.check_close_col(col+1)
-                    new_board.check_close_col(col+2)
                 case 2:
                     new_board.ships_placed_rows[row] += 2
                     new_board.ships_placed_cols[col] += 1
                     new_board.ships_placed_cols[col+1] += 1
 
-                    new_board.check_close_row(row)
-                    new_board.check_close_col(col)
-                    new_board.check_close_col(col+1)
                 case 1:
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_cols[col] += 1
 
-                    new_board.check_close_row(row)
-                    new_board.check_close_col(col)
-
         else: # orientation = "ver"
             match size:
                 case 4:
-                    print("putting a size 4 hor ship on (%d, %d)" % (row, col))
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_rows[row+1] += 1
                     new_board.ships_placed_rows[row+2] += 1
                     new_board.ships_placed_rows[row+3] += 1
                     new_board.ships_placed_cols[col] += 4
 
-                    print(new_board.ships_placed_rows)
-
-                    new_board.check_close_row(row)
-                    new_board.check_close_row(row+1)
-                    new_board.check_close_row(row+2)
-                    new_board.check_close_row(row+3)
-                    new_board.check_close_col(col)
                 case 3:
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_rows[row+1] += 1
                     new_board.ships_placed_rows[row+2] += 1
                     new_board.ships_placed_cols[col] += 3
 
-                    new_board.check_close_row(row)
-                    new_board.check_close_row(row+1)
-                    new_board.check_close_row(row+2)
-                    new_board.check_close_col(col)
                 case 2:
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_rows[row+1] += 1
                     new_board.ships_placed_cols[col] += 2
 
-                    new_board.check_close_row(row)
-                    new_board.check_close_row(row+1)
-                    new_board.check_close_col(col)
                 case 1:
                     new_board.ships_placed_rows[row] += 1
                     new_board.ships_placed_cols[col] += 1
-
-                    new_board.check_close_row(row)
-                    new_board.check_close_col(col)
-
 
         return BimaruState(new_board)
 
