@@ -31,511 +31,511 @@ from search import (
 
 def create_grids_ship1(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem circle em todas posições onde pode estar na grid
     # existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            columnIndex = 0
-            if rowIndex == 10:
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
+            row += 1
+            col = 0
+            if row == 10:
                 break
             continue
 
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            if columnIndex == 10:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
+            col += 1
+            if col == 10:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
         
         # cria a grid com o barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == CENTER) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == CENTER) and\
+            starting_board.grid[row][col] == UNKNOWN:
 
-            grid = ((rowIndex, columnIndex), 1, "hor")
+            grid = ((row, col), 1, "hor")
 
             grids.append(grid)
 
         # proximo ponto
-        columnIndex += 1
-        if columnIndex == 10:
-            columnIndex = 0
-            rowIndex += 1
+        col += 1
+        if col == 10:
+            col = 0
+            row += 1
             # Não existe mais nenhum ponto
-            if rowIndex == 10:
+            if row == 10:
                 break
 
     return grids
 
 def create_grids_ship2_horizontal(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem LEFT RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na horizontal
     for _ in range(90):
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]\
-                or Board.rows_nships[rowIndex] < 2\
-                or starting_board.ships_placed_rows[rowIndex] + 2 > Board.rows_nships[rowIndex]:
-            columnIndex += 1
-            if columnIndex >= 9:
-                columnIndex = 0
-                rowIndex += 1
-                if rowIndex == 10:
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]\
+                or Board.rows_nships[row] < 2\
+                or starting_board.ships_placed_rows[row] + 2 > Board.rows_nships[row]:
+            col += 1
+            if col >= 9:
+                col = 0
+                row += 1
+                if row == 10:
                     break
             continue
 
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            if columnIndex >= 9:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
+            col += 1
+            if col >= 9:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
-            columnIndex += 2
-            if columnIndex >= 9:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+1] == Board.cols_nships[col+1]:
+            col += 2
+            if col >= 9:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
 
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == LEFT) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+1] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == LEFT) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row][col+1] == UNKNOWN:
             
-            if (hints[rowIndex][columnIndex + 1] == UNKNOWN or
-                hints[rowIndex][columnIndex + 1] == RIGHT):
+            if (hints[row][col + 1] == UNKNOWN or
+                hints[row][col + 1] == RIGHT):
                 
-                grid = ((rowIndex, columnIndex), 2, "hor")
+                grid = ((row, col), 2, "hor")
 
                 grids.append(grid)
             else:
-                columnIndex += 1
+                col += 1
 
         # proximo ponto
-        columnIndex += 1
-        if columnIndex >= 9:
-            columnIndex = 0
-            rowIndex += 1
+        col += 1
+        if col >= 9:
+            col = 0
+            row += 1
             # Não existe mais nenhum ponto
-            if rowIndex == 10:
+            if row == 10:
                 break
 
     return grids
 
 def create_grids_ship2_vertical(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem TOP BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 90 combinações diferentes de meter esse ship na vertical
     for _ in range(90):
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]\
-                or Board.cols_nships[columnIndex] < 2\
-                or starting_board.ships_placed_cols[columnIndex] + 2 > Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            rowIndex = 0
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]\
+                or Board.cols_nships[col] < 2\
+                or starting_board.ships_placed_cols[col] + 2 > Board.cols_nships[col]:
+            col += 1
+            row = 0
             # Não existe mais nenhum ponto
-            if columnIndex == 10:
+            if col == 10:
                 break
             continue
         
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            if rowIndex >= 9:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
+            row += 1
+            if row >= 9:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
-            rowIndex += 2
-            if rowIndex >= 9:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+1] == Board.rows_nships[row+1]:
+            row += 2
+            if row >= 9:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
 
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == TOP) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+1][columnIndex] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == TOP) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row+1][col] == UNKNOWN:
             
-            if (hints[rowIndex + 1][columnIndex] == UNKNOWN or
-                hints[rowIndex + 1][columnIndex] == BOTTOM):
+            if (hints[row + 1][col] == UNKNOWN or
+                hints[row + 1][col] == BOTTOM):
                 
-                grid = ((rowIndex, columnIndex), 2, "ver")
+                grid = ((row, col), 2, "ver")
 
                 grids.append(grid)
             else:
-                rowIndex += 1
+                row += 1
 
         # proximo ponto
-        rowIndex += 1
-        if rowIndex >= 9:
-            rowIndex = 0
-            columnIndex += 1
+        row += 1
+        if row >= 9:
+            row = 0
+            col += 1
             # Não existe mais nenhum ponto
-            if columnIndex == 10:
+            if col == 10:
                 break
 
     return grids
 
 def create_grids_ship3_horizontal(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem LEFT MIDDLE RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na horizontal
     for _ in range(80):
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]\
-                or Board.rows_nships[rowIndex] < 3\
-                or starting_board.ships_placed_rows[rowIndex] + 3 > Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            columnIndex = 0
-            if rowIndex == 10:
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]\
+                or Board.rows_nships[row] < 3\
+                or starting_board.ships_placed_rows[row] + 3 > Board.rows_nships[row]:
+            row += 1
+            col = 0
+            if row == 10:
                 break
             continue
 
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            if columnIndex >= 8:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
+            col += 1
+            if col >= 8:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
-            columnIndex += 2
-            if columnIndex >= 8:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+1] == Board.cols_nships[col+1]:
+            col += 2
+            if col >= 8:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+2] == Board.cols_nships[columnIndex+2]:
-            columnIndex += 3
-            if columnIndex >= 8:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+2] == Board.cols_nships[col+2]:
+            col += 3
+            if col >= 8:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
 
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == LEFT) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+1] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+2] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == LEFT) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row][col+1] == UNKNOWN and\
+            starting_board.grid[row][col+2] == UNKNOWN:
             
-            if (hints[rowIndex][columnIndex + 1] == UNKNOWN or
-                hints[rowIndex][columnIndex + 1] == MIDDLE):
+            if (hints[row][col + 1] == UNKNOWN or
+                hints[row][col + 1] == MIDDLE):
                 
-                if (hints[rowIndex][columnIndex + 2] == UNKNOWN or
-                hints[rowIndex][columnIndex + 2] == RIGHT):
+                if (hints[row][col + 2] == UNKNOWN or
+                hints[row][col + 2] == RIGHT):
                     
-                    grid = ((rowIndex, columnIndex), 3, "hor")
+                    grid = ((row, col), 3, "hor")
 
                     grids.append(grid)
                 else:
-                    columnIndex += 2
+                    col += 2
             else:
-                columnIndex += 1
+                col += 1
 
         # proximo ponto
-        columnIndex += 1
-        if columnIndex >= 8:
-            columnIndex = 0
-            rowIndex += 1
+        col += 1
+        if col >= 8:
+            col = 0
+            row += 1
             # Não existe mais nenhum ponto
-            if rowIndex == 10:
+            if row == 10:
                 break
 
     return grids
 
 def create_grids_ship3_vertical(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
     for _ in range(80):
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]\
-                or Board.cols_nships[columnIndex] < 3\
-                or starting_board.ships_placed_cols[columnIndex]+3 > Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            rowIndex = 0
-            if columnIndex == 10:
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]\
+                or Board.cols_nships[col] < 3\
+                or starting_board.ships_placed_cols[col]+3 > Board.cols_nships[col]:
+            col += 1
+            row = 0
+            if col == 10:
                 break
             continue
 
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            if rowIndex >= 8:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
+            row += 1
+            if row >= 8:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
-            rowIndex += 2
-            if rowIndex >= 8:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+1] == Board.rows_nships[row+1]:
+            row += 2
+            if row >= 8:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+2] == Board.rows_nships[rowIndex+2]:
-            rowIndex += 3
-            if rowIndex >= 8:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+2] == Board.rows_nships[row+2]:
+            row += 3
+            if row >= 8:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
         
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == TOP) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+1][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+2][columnIndex] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == TOP) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row+1][col] == UNKNOWN and\
+            starting_board.grid[row+2][col] == UNKNOWN:
             
-            if (hints[rowIndex + 1][columnIndex] == UNKNOWN or
-                hints[rowIndex + 1][columnIndex] == MIDDLE):
+            if (hints[row + 1][col] == UNKNOWN or
+                hints[row + 1][col] == MIDDLE):
 
-                if (hints[rowIndex + 2][columnIndex] == UNKNOWN or
-                    hints[rowIndex + 2][columnIndex] == BOTTOM):
+                if (hints[row + 2][col] == UNKNOWN or
+                    hints[row + 2][col] == BOTTOM):
                     
-                    grid = ((rowIndex, columnIndex), 3, "ver")
+                    grid = ((row, col), 3, "ver")
                     
                     grids.append(grid)
                 else:
-                    rowIndex += 2
+                    row += 2
             else:
-                rowIndex += 1
+                row += 1
 
         # proximo ponto
-        rowIndex += 1
-        if rowIndex >= 8:
-            rowIndex = 0
-            columnIndex += 1
+        row += 1
+        if row >= 8:
+            row = 0
+            col += 1
             # Não existe mais nenhum ponto
-            if columnIndex == 10:
+            if col == 10:
                 break
 
     return grids
 
 def create_grids_ship4_horizontal(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem LEFT MIDDLE MIDDLE RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 70 combinações diferentes de meter esse ship na horizontal
     for _ in range(70):
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex] or Board.rows_nships[rowIndex] < 4\
-                or starting_board.ships_placed_rows[rowIndex] + 4 > Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            columnIndex = 0
-            if rowIndex == 10:
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row] or Board.rows_nships[row] < 4\
+                or starting_board.ships_placed_rows[row] + 4 > Board.rows_nships[row]:
+            row += 1
+            col = 0
+            if row == 10:
                 break
             continue
 
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            if columnIndex >= 7:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
+            col += 1
+            if col >= 7:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+1] == Board.cols_nships[columnIndex+1]:
-            columnIndex += 2
-            if columnIndex >= 7:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+1] == Board.cols_nships[col+1]:
+            col += 2
+            if col >= 7:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+2] == Board.cols_nships[columnIndex+2]:
-            columnIndex += 3
-            if columnIndex >= 7:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+2] == Board.cols_nships[col+2]:
+            col += 3
+            if col >= 7:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[columnIndex+3] == Board.cols_nships[columnIndex+3]:
-            columnIndex += 4
-            if columnIndex >= 7:
-                columnIndex = 0
-                rowIndex += 1
+        if starting_board.ships_placed_cols[col+3] == Board.cols_nships[col+3]:
+            col += 4
+            if col >= 7:
+                col = 0
+                row += 1
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
 
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == LEFT) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+1] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+2] == UNKNOWN and\
-            starting_board.grid[rowIndex][columnIndex+3] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == LEFT) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row][col+1] == UNKNOWN and\
+            starting_board.grid[row][col+2] == UNKNOWN and\
+            starting_board.grid[row][col+3] == UNKNOWN:
             
-            if (hints[rowIndex][columnIndex + 1] == UNKNOWN or
-                hints[rowIndex][columnIndex + 1] == MIDDLE):
+            if (hints[row][col + 1] == UNKNOWN or
+                hints[row][col + 1] == MIDDLE):
 
-                if (hints[rowIndex][columnIndex + 2] == UNKNOWN or
-                    hints[rowIndex][columnIndex + 2] == MIDDLE):
+                if (hints[row][col + 2] == UNKNOWN or
+                    hints[row][col + 2] == MIDDLE):
                     
-                    if (hints[rowIndex][columnIndex + 3] == UNKNOWN or
-                    hints[rowIndex][columnIndex + 3] == RIGHT):
+                    if (hints[row][col + 3] == UNKNOWN or
+                    hints[row][col + 3] == RIGHT):
                         
-                        grid = ((rowIndex, columnIndex), 4, "hor")
+                        grid = ((row, col), 4, "hor")
                         
                         grids.append(grid)
                     else:
-                        columnIndex += 3
+                        col += 3
                 else:
-                    columnIndex += 2
+                    col += 2
             else:
-                columnIndex += 1
+                col += 1
 
         # proximo ponto
-        columnIndex += 1
-        if columnIndex >= 7:
-            columnIndex = 0
-            rowIndex += 1
+        col += 1
+        if col >= 7:
+            col = 0
+            row += 1
             # Não existe mais nenhum ponto
-            if rowIndex == 10:
+            if row == 10:
                 break
 
     return grids
 
 def create_grids_ship4_vertical(hints, starting_board):
     grids = []
-    rowIndex = 0
-    columnIndex = 0
+    row = 0
+    col = 0
 
     # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
     for _ in range(70):
-        if starting_board.ships_placed_cols[columnIndex] == Board.cols_nships[columnIndex] or Board.cols_nships[columnIndex] < 4\
-                or starting_board.ships_placed_cols[columnIndex] + 4 > Board.cols_nships[columnIndex]:
-            columnIndex += 1
-            if columnIndex == 10:
-                rowIndex += 1
-                columnIndex = 0
+        if starting_board.ships_placed_cols[col] == Board.cols_nships[col] or Board.cols_nships[col] < 4\
+                or starting_board.ships_placed_cols[col] + 4 > Board.cols_nships[col]:
+            col += 1
+            if col == 10:
+                row += 1
+                col = 0
                 # Não existe mais nenhum ponto
-                if rowIndex == 10:
+                if row == 10:
                     break
             continue
 
-        if starting_board.ships_placed_rows[rowIndex] == Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            if rowIndex >= 7:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
+            row += 1
+            if row >= 7:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+1] == Board.rows_nships[rowIndex+1]:
-            rowIndex += 2
-            if rowIndex >= 7:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+1] == Board.rows_nships[row+1]:
+            row += 2
+            if row >= 7:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+2] == Board.rows_nships[rowIndex+2]:
-            rowIndex += 3
-            if rowIndex >= 7:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+2] == Board.rows_nships[row+2]:
+            row += 3
+            if row >= 7:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
-        if starting_board.ships_placed_rows[rowIndex+3] == Board.rows_nships[rowIndex+3]:
-            rowIndex += 4
-            if rowIndex >= 7:
-                rowIndex = 0
-                columnIndex += 1
+        if starting_board.ships_placed_rows[row+3] == Board.rows_nships[row+3]:
+            row += 4
+            if row >= 7:
+                row = 0
+                col += 1
                 # Não existe mais nenhum ponto
-                if columnIndex == 10:
+                if col == 10:
                     break
             continue
 
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (hints[rowIndex][columnIndex] == UNKNOWN or
-            hints[rowIndex][columnIndex] == TOP) and\
-            starting_board.grid[rowIndex][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+1][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+2][columnIndex] == UNKNOWN and\
-            starting_board.grid[rowIndex+3][columnIndex] == UNKNOWN:
+        if (hints[row][col] == UNKNOWN or
+            hints[row][col] == TOP) and\
+            starting_board.grid[row][col] == UNKNOWN and\
+            starting_board.grid[row+1][col] == UNKNOWN and\
+            starting_board.grid[row+2][col] == UNKNOWN and\
+            starting_board.grid[row+3][col] == UNKNOWN:
             
-            if (hints[rowIndex + 1][columnIndex] == UNKNOWN or
-                hints[rowIndex + 1][columnIndex] == MIDDLE):
+            if (hints[row + 1][col] == UNKNOWN or
+                hints[row + 1][col] == MIDDLE):
                 
-                if (hints[rowIndex + 2][columnIndex] == UNKNOWN or
-                    hints[rowIndex + 2][columnIndex] == MIDDLE):
+                if (hints[row + 2][col] == UNKNOWN or
+                    hints[row + 2][col] == MIDDLE):
                     
-                    if (hints[rowIndex + 3][columnIndex] == UNKNOWN or
-                        hints[rowIndex + 3][columnIndex] == BOTTOM):
+                    if (hints[row + 3][col] == UNKNOWN or
+                        hints[row + 3][col] == BOTTOM):
                         
-                        grid = ((rowIndex, columnIndex), 4, "ver")
+                        grid = ((row, col), 4, "ver")
                         
                         grids.append(grid)
                     else:
-                        rowIndex += 3
+                        row += 3
                 else:
-                    rowIndex += 2
+                    row += 2
             else:
-                rowIndex += 1
+                row += 1
 
         # proximo ponto
-        rowIndex += 1
-        if rowIndex >= 7:
-            rowIndex = 0
-            columnIndex += 1
+        row += 1
+        if row >= 7:
+            row = 0
+            col += 1
             # Não existe mais nenhum ponto
-            if columnIndex == 10:
+            if col == 10:
                 break
 
     return grids
@@ -757,7 +757,7 @@ class Board:
         # Maybe hints_matrix could be used for this? (to know what type of ship piece)
         # Try if there's enough memory available
         for pos in self.hints_pos:
-            if self.grid[pos[0]][pos[1]] == -1: # Hint position is water or unknown
+            if self.grid[pos[0]][pos[1]] == -1: # There's nothing in the position
                 return False
         
         if self.nships_of_size[0] != 4 or self.nships_of_size[1] != 3 or\
