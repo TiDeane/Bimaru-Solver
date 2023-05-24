@@ -62,15 +62,21 @@ def create_grids_ship1(hints, starting_board):
             grid = [[-1] * 10 for _ in range(10)]
             grid[rowIndex][columnIndex] = CENTER
 
-            """
-            grid[rowIndex-1][columnIndex-1] = WATER
-            grid[rowIndex-1][columnIndex] = WATER
-            grid[rowIndex-1][columnIndex+1] = WATER
-            grid[rowIndex][columnIndex-1] = WATER
-            grid[rowIndex][columnIndex+1] = WATER
-            grid[rowIndex+1][columnIndex-1] = WATER
-            grid[rowIndex+1][columnIndex] = WATER
-            grid[rowIndex+1][columnIndex+1] = WATER"""
+            # desenha agua em cima do barco
+            if rowIndex > 0:
+                for auxColumnIndex in range(columnIndex - 1, columnIndex + 2):
+                    if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                        grid[rowIndex - 1][auxColumnIndex] = WATER
+            # desneha agua em baixo do barco
+            if rowIndex < 9:
+                for auxColumnIndex in range(columnIndex - 1, columnIndex + 2):
+                    if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                        grid[rowIndex + 1][auxColumnIndex] = WATER
+            # desenha a agua a esquerda e a direita do barco
+            if columnIndex > 0:
+                grid[rowIndex][columnIndex - 1] = WATER
+            if columnIndex < 9:
+                grid[rowIndex][columnIndex + 1] = WATER
 
             grids.append(grid)
 
@@ -132,17 +138,21 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 grid[rowIndex][columnIndex] = LEFT
                 grid[rowIndex][columnIndex + 1] = RIGHT
 
-                """
-                grid[rowIndex-1][columnIndex-1] = WATER
-                grid[rowIndex-1][columnIndex] = WATER
-                grid[rowIndex-1][columnIndex+1] = WATER
-                grid[rowIndex-1][columnIndex+2] = WATER
-                grid[rowIndex][columnIndex-1] = WATER
-                grid[rowIndex][columnIndex+2] = WATER
-                grid[rowIndex+1][columnIndex-1] = WATER
-                grid[rowIndex+1][columnIndex] = WATER
-                grid[rowIndex+1][columnIndex+1] = WATER
-                grid[rowIndex+1][columnIndex+2] = WATER"""
+                # desenha agua em cima do barco
+                if rowIndex > 0:
+                    for auxColumnIndex in range(columnIndex - 1, columnIndex + 3):
+                        if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                            grid[rowIndex - 1][auxColumnIndex] = WATER
+                # desneha agua em baixo do barco
+                if rowIndex < 9:
+                    for auxColumnIndex in range(columnIndex - 1, columnIndex + 3):
+                        if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                            grid[rowIndex + 1][auxColumnIndex] = WATER
+                # desenha a agua a esquerda e a direita do barco
+                if columnIndex > 0:
+                    grid[rowIndex][columnIndex - 1] = WATER
+                if (columnIndex + 1) < 9:
+                    grid[rowIndex][columnIndex + 2] = WATER
 
                 grids.append(grid)
             else:
@@ -203,17 +213,21 @@ def create_grids_ship2_vertical(hints, starting_board):
                 grid[rowIndex][columnIndex] = TOP
                 grid[rowIndex + 1][columnIndex] = BOTTOM
 
-                """
-                grid[rowIndex-1][columnIndex-1] = WATER
-                grid[rowIndex-1][columnIndex] = WATER
-                grid[rowIndex-1][columnIndex+1] = WATER
-                grid[rowIndex][columnIndex-1] = WATER
-                grid[rowIndex][columnIndex+1] = WATER
-                grid[rowIndex+1][columnIndex-1] = WATER
-                grid[rowIndex+1][columnIndex+1] = WATER
-                grid[rowIndex+2][columnIndex-1] = WATER
-                grid[rowIndex+2][columnIndex] = WATER
-                grid[rowIndex+2][columnIndex+1] = WATER"""
+                # desenha agua do lado esquerdo do barco
+                if columnIndex > 0:
+                    for auxRowIndex in range(rowIndex - 1, rowIndex + 3):
+                        if auxRowIndex >= 0 and auxRowIndex <= 9:
+                            grid[auxRowIndex][columnIndex - 1] = WATER
+                # desenha agua do lado direito do barco
+                if columnIndex < 9:
+                    for auxRowIndex in range(rowIndex - 1, rowIndex + 3):
+                        if auxRowIndex >= 0 and auxRowIndex <= 9:
+                            grid[auxRowIndex][columnIndex + 1] = WATER
+                # desenha agua em cima e em baixo do barco
+                if rowIndex > 0:
+                    grid[rowIndex - 1][columnIndex] = WATER
+                if (rowIndex + 1) < 9:
+                    grid[rowIndex + 2][columnIndex] = WATER
 
                 grids.append(grid)
             else:
@@ -255,6 +269,23 @@ def create_grids_ship3_horizontal(hints, starting_board):
                     grid[rowIndex][columnIndex] = LEFT
                     grid[rowIndex][columnIndex + 1] = MIDDLE
                     grid[rowIndex][columnIndex + 2] = RIGHT
+
+                    # desenha agua em cima do barco
+                    if rowIndex > 0:
+                        for auxColumnIndex in range(columnIndex - 1, columnIndex + 4):
+                            if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                                grid[rowIndex - 1][auxColumnIndex] = WATER
+                    # desneha agua em baixo barco
+                    if rowIndex < 9:
+                        for auxColumnIndex in range(columnIndex - 1, columnIndex + 4):
+                            if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                                grid[rowIndex + 1][auxColumnIndex] = WATER
+                    # desenha a agua a esquerda e a direita do barco
+                    if columnIndex > 0:
+                        grid[rowIndex][columnIndex - 1] = WATER
+                    if (columnIndex + 2) < 9:
+                        grid[rowIndex][columnIndex + 3] = WATER
+
                     grids.append(grid)
                 else:
                     columnIndex += 2
@@ -297,6 +328,23 @@ def create_grids_ship3_vertical(hints, starting_board):
                     grid[rowIndex][columnIndex] = TOP
                     grid[rowIndex + 1][columnIndex] = MIDDLE
                     grid[rowIndex + 2][columnIndex] = BOTTOM
+
+                    # desenha agua do lado esquerdo do barco
+                    if columnIndex > 0:
+                        for auxRowIndex in range(rowIndex - 1, rowIndex + 4):
+                            if auxRowIndex >= 0 and auxRowIndex <= 9:
+                                grid[auxRowIndex][columnIndex - 1] = WATER
+                    # desenha agua do lado direito do barco
+                    if columnIndex < 9:
+                        for auxRowIndex in range(rowIndex - 1, rowIndex + 4):
+                            if auxRowIndex >= 0 and auxRowIndex <= 9:
+                                grid[auxRowIndex][columnIndex + 1] = WATER
+                    # desenha agua em cima e em baixo do barco
+                    if rowIndex > 0:
+                        grid[rowIndex - 1][columnIndex] = WATER
+                    if (rowIndex + 2) < 9:
+                        grid[rowIndex + 3][columnIndex] = WATER
+
                     grids.append(grid)
                 else:
                     rowIndex += 2
@@ -344,6 +392,23 @@ def create_grids_ship4_horizontal(hints, starting_board):
                         grid[rowIndex][columnIndex + 1] = MIDDLE
                         grid[rowIndex][columnIndex + 2] = MIDDLE
                         grid[rowIndex][columnIndex + 3] = RIGHT
+
+                        # desenha agua em cima do barco
+                        if rowIndex > 0:
+                            for auxColumnIndex in range(columnIndex - 1, columnIndex + 5):
+                                if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                                    grid[rowIndex - 1][auxColumnIndex] = WATER
+                        # desneha agua em baixo do barco
+                        if rowIndex < 9:
+                            for auxColumnIndex in range(columnIndex - 1, columnIndex + 5):
+                                if auxColumnIndex >= 0 and auxColumnIndex <= 9:
+                                    grid[rowIndex + 1][auxColumnIndex] = WATER
+                        # desenha a agua a esquerda e a direita do barco
+                        if columnIndex > 0:
+                            grid[rowIndex][columnIndex - 1] = WATER
+                        if (columnIndex + 3) < 9:
+                            grid[rowIndex][columnIndex + 4] = WATER
+
                         grids.append(grid)
                     else:
                         columnIndex += 3
@@ -393,6 +458,23 @@ def create_grids_ship4_vertical(hints, starting_board):
                         grid[rowIndex + 1][columnIndex] = MIDDLE
                         grid[rowIndex + 2][columnIndex] = MIDDLE
                         grid[rowIndex + 3][columnIndex] = BOTTOM
+
+                        # desenha agua do lado esquerdo do barco
+                        if columnIndex > 0:
+                            for auxRowIndex in range(rowIndex - 1, rowIndex + 5):
+                                if auxRowIndex >= 0 and auxRowIndex <= 9:
+                                    grid[auxRowIndex][columnIndex - 1] = WATER
+                        # desenha agua do lado direito do barco
+                        if columnIndex < 9:
+                            for auxRowIndex in range(rowIndex - 1, rowIndex + 5):
+                                if auxRowIndex >= 0 and auxRowIndex <= 9:
+                                    grid[auxRowIndex][columnIndex + 1] = WATER
+                        # desenha agua em cima e em baixo do barco
+                        if rowIndex > 0:
+                            grid[rowIndex - 1][columnIndex] = WATER
+                        if (rowIndex + 3) < 9:
+                            grid[rowIndex + 3][columnIndex] = WATER
+
                         grids.append(grid)
                     else:
                         rowIndex += 3
