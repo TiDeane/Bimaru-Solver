@@ -608,7 +608,7 @@ class Board:
         """Returns True if the row is complete and False otherwise. If True, it
         also fills the remaining spots with water and adds the row to the
         'complete_rows' set"""
-        if 0 <= row <= 9 and self.get_row_nships(row) == Board.rows_nships[row]:
+        if 0 <= row <= 9 and self.get_row_nships(row) >= Board.rows_nships[row]:
             for col in range(10):
                 if self.grid[row][col] == -1:
                     self.grid[row][col] = WATER
@@ -620,7 +620,7 @@ class Board:
         """Returns True if the column is complete and False otherwise. If True,
         it also fills the remaining spots with water and adds the column to the
         'complete_columns' set"""
-        if 0 <= col <= 9 and self.get_col_nships(col) == Board.cols_nships[col]:
+        if 0 <= col <= 9 and self.get_col_nships(col) >= Board.cols_nships[col]:
             for row in range(10):
                 if self.grid[row][col] == -1:
                     self.grid[row][col] = WATER
@@ -1031,6 +1031,10 @@ class Bimaru(Problem):
         new_board = Board(new_grid, state.board.nships_of_size)
         new_board.nships_of_size[action[1]-1] += 1
 
+        for i in range(10):
+            new_board.check_close_col(i)
+            new_board.check_close_row(i)
+
         return BimaruState(new_board)
 
     def goal_test(self, state: BimaruState):
@@ -1065,11 +1069,10 @@ if __name__ == "__main__":
     # Criar uma instância de Bimaru:
     #problem = Bimaru(board)
     # Criar um estado com a configuração inicial:
-    #initial_state = BimaruState(board)
-    #print(Board.rows_nships)
-    #print(np.array(initial_state.board.grid))
-    # Realizar acção de inserir o valor w (água) na posição da linha 3 e coluna 3
-    #result_state = problem.result(initial_state, ([[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,LEFT,MIDDLE,MIDDLE,RIGHT], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]], 4))
-    #print(np.array(result_state.board.grid))
+    initial_state = BimaruState(board)
+    print(Board.rows_nships)
+    print(np.array(initial_state.board.grid))
+    result_state = bimaru.result(initial_state, ([[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,LEFT,MIDDLE,MIDDLE,RIGHT], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]], 4))
+    print(np.array(result_state.board.grid))
 
     pass
