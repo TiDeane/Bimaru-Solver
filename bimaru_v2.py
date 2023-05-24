@@ -577,6 +577,9 @@ class Board:
     hints_pos = []
 
     # Lists of grids
+    """Note: a ship grid is a tuple with the format ((row,col), size, orientation),
+    where (row,col) is the ship's first position, size is the ship's size and
+    orientation is either 'hor' (horizontal) or 'ver' (vertical)"""
     grids_ship1 = []
     grids_ship2_hor = []
     grids_ship2_ver = []
@@ -586,13 +589,16 @@ class Board:
     grids_ship4_ver = []
 
     def __init__(self, grid, nships_of_size, ships_placed_rows, ships_placed_cols):
+        # The Board's grid is a 10x10 grid that represents the puzzle's board
         self.grid = grid
 
+        # ships_placed_rows[n] holds how many ships have been placed in row n
         if len(ships_placed_rows) == 0:
             self.ships_placed_rows = np.zeros(10, np.uint8)
         else:
             self.ships_placed_rows = ships_placed_rows
         
+        # ships_placed_cols[n] holds how many ships have been placed in column n
         if len(ships_placed_cols) == 0:
             self.ships_placed_cols = np.zeros(10, np.uint8)
         else:
@@ -646,7 +652,7 @@ class Board:
         return self.no_ships_around(row, col)
     
     def can_place_ship2_h(self, row: int, col: int):
-        """Returns True if horizontal size 2 a ship can be placed in the given position"""
+        """Returns True if a horizontal size 2 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row, col+1) != UNKNOWN\
                 or self.ships_placed_rows[row] == Board.rows_nships[row] or\
                 self.ships_placed_cols[col] == Board.cols_nships[col] or\
@@ -657,7 +663,7 @@ class Board:
         return self.no_ships_around(row, col) and self.no_ships_around(row, col+1)
     
     def can_place_ship2_v(self, row: int, col: int):
-        """Returns True if vertical size 2a ship can be placed in the given position"""
+        """Returns True if a vertical size 2 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row+1, col) != UNKNOWN\
                 or self.ships_placed_rows[row] == Board.rows_nships[row]\
                 or self.ships_placed_rows[row+1] == Board.rows_nships[row+1]\
@@ -694,7 +700,7 @@ class Board:
         return self.no_ships_around(row, col) and self.no_ships_around(row+1, col) and self.no_ships_around(row+2, col)
     
     def can_place_ship4_h(self, row: int, col: int):
-        """Returns True if a horizontal size 3 ship can be placed in the given position"""
+        """Returns True if a horizontal size 4 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row, col+1) != UNKNOWN\
                 or self.get_value(row, col+2) != UNKNOWN\
                 or self.get_value(row, col+3) != UNKNOWN\
@@ -710,7 +716,7 @@ class Board:
             and self.no_ships_around(row, col+2) and self.no_ships_around(row, col+3) 
     
     def can_place_ship4_v(self, row: int, col: int):
-        """Returns True if a vertical size 3 ship can be placed in the given position"""
+        """Returns True if a vertical size 4 ship can be placed in the given position"""
         if self.get_value(row, col) != UNKNOWN or self.get_value(row+1, col) != UNKNOWN\
                 or self.get_value(row+2, col) != UNKNOWN\
                 or self.get_value(row+3, col) != UNKNOWN\
@@ -723,43 +729,27 @@ class Board:
             return False
         
         return self.no_ships_around(row, col) and self.no_ships_around(row+1, col)\
-            and self.no_ships_around(row+2, col) and self.no_ships_around(row+3, col) 
-    
-    def get_row_nships(self, row: int):
-        """Returns the number of ships placed in the given row"""
-        sum = 0
-        if 0 <= row <= 9:
-            for col in range(10):
-                if self.grid[row][col] > 0:
-                    sum += 1
-            return sum
-        
-    def get_col_nships(self, col: int):
-        """Returns the number of ships placed in the given column"""
-        sum = 0
-        if 0 <= col <= 9:
-            for row in range(10):
-                if self.grid[row][col] > 0:
-                    sum += 1
-            return sum         
+            and self.no_ships_around(row+2, col) and self.no_ships_around(row+3, col)   
     
     def check_objective(self):
         """Returns True if the Board's grid is the puzzle's solution"""
-        print(self.ships_placed_rows)
+        print(self.ships_placed_rows)  #TODO remove these prints
         print(Board.rows_nships)
         print(self.ships_placed_cols)
         print(Board.cols_nships)
+        # Checks if all rows and columns have the required number of ships
         for n in range(10):
             if self.ships_placed_rows[n] != Board.rows_nships[n] or\
                     self.ships_placed_cols[n] != Board.cols_nships[n]:
                 return False
-            
-        # Maybe hints_matrix could be used for this? (to know what type of ship piece)
-        # Try if there's enough memory available
+
+        # Checks if all hint position have ships in them
         for pos in self.hints_pos:
-            if self.grid[pos[0]][pos[1]] == -1: # There's nothing in the position
+            if self.grid[pos[0]][pos[1]] == -1:
                 return False
         
+        # Checks if there are 4 size 1 ships, 3 size 2 ships,
+        # 2 size 3 ships and 1 size 4 ship
         if self.nships_of_size[0] != 4 or self.nships_of_size[1] != 3 or\
             self.nships_of_size[2] != 2 or self.nships_of_size[3] != 1:
             return False
@@ -767,8 +757,8 @@ class Board:
         return True
     
     def add_ship(self, ship_grid):
-        """Returns a new grid that is the combination of this Board's grid
-        with the grid given as argument"""
+        """Returns a new 10x10 grid that is the combination of this Board's grid
+        and the ship grid given as argument"""
         new_grid = [row[:] for row in self.grid] # hard copy of this board's grid
 
         size = ship_grid[1]
@@ -870,14 +860,16 @@ class Board:
 
     def interpret_hints(self, nhints: int):
         """Interprets the given hints and does the following things:
-        - Creates the puzzle's starting grid
+        - Creates the puzzle's starting grid and gives it to this Board
         - Places any ships of size 1 given in the hints in the starting grid
+        - Updates the 'nships_of_size', 'ships_placed_rows' and 
+        'ships_placed_cols' lists if a size 1 ship is placed
         - Places water around those ships of size 1
         - Reading the hints, puts water on the necessary positions
-        - Checks if any rows or columns have already been completed. If so, adds
-        them to the corresponding sets and fills the remaining spots with water
+        - Fills the 'hints_pos' list, that saves each hint's position
         - Creates all possible grids to be added to the starting grid"""
 
+        # A matrix with the hints' ships and water spots placed
         hints_matrix = np.array([[-1] * 10 for _ in range(10)])
         starting_grid = [[-1 for _ in range(10)] for _ in range(10)]
 
@@ -1080,8 +1072,7 @@ class Board:
         return starting_board
 
     def __str__(self): #TODO
-        """When printing a class, this function gets called.
-        #TODO Make it print the grid's representation, please"""
+        """Prints this Board's grid in the required format"""
 
         string_grid = ""
 
