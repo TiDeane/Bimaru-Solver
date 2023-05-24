@@ -774,19 +774,45 @@ class Board:
                 
         return True
     
-    def get_combined_grid(self, grid):
+    def add_ship(self, ship_grid):
         """Returns a new grid that is the combination of this Board's grid
         with the grid given as argument"""
-        new_grid = [[UNKNOWN for _ in range(10)] for _ in range(10)]
+        new_grid = [row[:] for row in self.grid] # hard copy of this board's grid
+
+        size = ship_grid[1]
+        orientation = ship_grid[2]
+        row = ship_grid[0][0]
+        col = ship_grid[0][1]
         
-        for i in range(10):
-            for j in range(10):
-                if self.grid[i][j] >= 0 and grid[i][j] == UNKNOWN:
-                    new_grid[i][j] = self.grid[i][j]
-                elif self.grid[i][j] == UNKNOWN and grid[i][j] >= 0:
-                    new_grid[i][j] = grid[i][j]
-                else:
-                    new_grid[i][j] = self.grid[i][j]
+        if size == 4:
+            if orientation == "hor":
+                new_grid[row][col] = LEFT
+                new_grid[row][col+1] = MIDDLE
+                new_grid[row][col+2] = MIDDLE
+                new_grid[row][col+3] = RIGHT
+            else:
+                new_grid[row][col] = TOP
+                new_grid[row+1][col] = MIDDLE
+                new_grid[row+2][col] = MIDDLE
+                new_grid[row+3][col] = BOTTOM
+        elif size == 3:
+            if orientation == "hor":
+                new_grid[row][col] = LEFT
+                new_grid[row][col+1] = MIDDLE
+                new_grid[row][col+2] = RIGHT
+            else:
+                new_grid[row][col] = TOP
+                new_grid[row+1][col] = MIDDLE
+                new_grid[row+2][col] = BOTTOM
+        elif size == 2:
+            if orientation == "hor":
+                new_grid[row][col] = LEFT
+                new_grid[row][col+1] = RIGHT
+            else:
+                new_grid[row][col] = TOP
+                new_grid[row+1][col] = BOTTOM
+        elif size == 1:
+            new_grid[row][col] = CENTER
         
         return new_grid
 
@@ -1121,10 +1147,10 @@ class Board:
         starting_board = Board([], [])
         starting_board.interpret_hints(nhints)
 
-        #print(len(Board.grids_ship3_hor))
-        #for i in range(len(Board.grids_ship3_hor)):
-        #    print(Board.grids_ship3_hor[i])
-        #    print(starting_board.can_place_ship3_h(Board.grids_ship3_hor[i][0][0], Board.grids_ship3_hor[i][0][1]))
+        print(len(Board.grids_ship3_hor))
+        for i in range(len(Board.grids_ship3_hor)):
+            print(Board.grids_ship3_hor[i])
+            print(starting_board.can_place_ship3_h(Board.grids_ship3_hor[i][0][0], Board.grids_ship3_hor[i][0][1]))
 
         return starting_board
 
@@ -1182,24 +1208,9 @@ if __name__ == "__main__":
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
 
-    #board = Board.parse_instance()
-    #bimaru = Bimaru(board)
+    board = Board.parse_instance()
+    bimaru = Bimaru(board)
     #goal_node = breadth_first_tree_search(bimaru)
     #print(goal_node)
-
-    board = Board.parse_instance()
-    # Criar uma instância de Bimaru:
-    problem = Bimaru(board)
-    # Criar um estado com a configuração inicial:
-    initial_state = BimaruState(board)
-    # Mostrar valor na posição (3, 3):
-    #print(initial_state.board.get_value(3, 3))
-    #print(Board.rows_nships)
-    #print(np.array(initial_state.board.grid))
-    # Realizar acção de inserir o valor w (água) na posição da linha 3 e coluna 3
-    result_state = problem.result(initial_state, ([[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,LEFT,MIDDLE,MIDDLE,RIGHT], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]], 4))
-    #print(np.array(result_state.board.grid))
-    # Mostrar valor na posição (3, 3):
-    #print(result_state.board.get_value(3, 3))
 
     pass
