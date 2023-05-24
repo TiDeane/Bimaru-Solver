@@ -84,13 +84,15 @@ def create_grids_ship2_horizontal(hints, starting_board):
     for _ in range(90):
         if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 2\
                 or starting_board.ships_placed_rows[rowIndex] + 2 > Board.rows_nships[rowIndex]:
-            rowIndex += 1
-            columnIndex = 0
-            if rowIndex == 10:
-                break
+            columnIndex += 1
+            if columnIndex >= 9:
+                columnIndex = 0
+                rowIndex += 1
+                if rowIndex == 10:
+                    break
             continue
 
-        if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 1: # second condition is redundant?
+        if columnIndex in starting_board.complete_cols:
             columnIndex += 1
             if columnIndex >= 9:
                 columnIndex = 0
@@ -99,7 +101,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 if rowIndex == 10:
                     break
             continue
-        if (columnIndex+1) in starting_board.complete_cols or Board.cols_nships[columnIndex+1] < 1: # second condition is redundant?
+        if (columnIndex+1) in starting_board.complete_cols:
             columnIndex += 2
             if columnIndex >= 9:
                 columnIndex = 0
@@ -146,17 +148,14 @@ def create_grids_ship2_vertical(hints, starting_board):
         if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 2\
                 or starting_board.ships_placed_cols[columnIndex] + 2 > Board.cols_nships[columnIndex]:
             columnIndex += 1
-            if columnIndex >= 9:
-                columnIndex = 0
-                rowIndex += 1
-                # Não existe mais nenhum ponto
-                if rowIndex == 10:
-                    break
+            rowIndex = 0
+            # Não existe mais nenhum ponto
+            if columnIndex == 10:
+                break
             continue
         
-        if rowIndex in starting_board.complete_rows or Board.rows_nships[rowIndex] < 1:  # second condition is redundant?
+        if rowIndex in starting_board.complete_rows:
             rowIndex += 1
-            columnIndex == 0
             if rowIndex >= 9:
                 rowIndex = 0
                 columnIndex += 1
@@ -164,9 +163,8 @@ def create_grids_ship2_vertical(hints, starting_board):
                 if columnIndex == 10:
                     break
             continue
-        if rowIndex+1 in starting_board.complete_rows or Board.rows_nships[rowIndex+1] < 1:  # second condition is redundant?
+        if rowIndex+1 in starting_board.complete_rows:
             rowIndex += 2
-            columnIndex == 0
             if rowIndex >= 9:
                 rowIndex = 0
                 columnIndex += 1
@@ -288,17 +286,13 @@ def create_grids_ship3_vertical(hints, starting_board):
         if columnIndex in starting_board.complete_cols or Board.cols_nships[columnIndex] < 3\
                 or starting_board.ships_placed_cols[columnIndex] + 3 > Board.cols_nships[columnIndex]:
             columnIndex += 1
+            rowIndex = 0
             if columnIndex == 10:
-                rowIndex += 1
-                columnIndex == 0
-                # Não existe mais nenhum ponto
-                if rowIndex == 10:
-                    break
+                break
             continue
 
         if rowIndex in starting_board.complete_rows:
             rowIndex += 1
-            columnIndex == 0
             if rowIndex >= 8:
                 rowIndex = 0
                 columnIndex += 1
@@ -308,7 +302,6 @@ def create_grids_ship3_vertical(hints, starting_board):
             continue
         if rowIndex+1 in starting_board.complete_rows:
             rowIndex += 2
-            columnIndex == 0
             if rowIndex >= 8:
                 rowIndex = 0
                 columnIndex += 1
@@ -318,7 +311,6 @@ def create_grids_ship3_vertical(hints, starting_board):
             continue
         if rowIndex+2 in starting_board.complete_rows:
             rowIndex += 3
-            columnIndex == 0
             if rowIndex >= 8:
                 rowIndex = 0
                 columnIndex += 1
@@ -463,7 +455,7 @@ def create_grids_ship4_vertical(hints, starting_board):
             columnIndex += 1
             if columnIndex == 10:
                 rowIndex += 1
-                columnIndex == 0
+                columnIndex = 0
                 # Não existe mais nenhum ponto
                 if rowIndex == 10:
                     break
@@ -471,7 +463,6 @@ def create_grids_ship4_vertical(hints, starting_board):
 
         if rowIndex in starting_board.complete_rows:
             rowIndex += 1
-            columnIndex == 0
             if rowIndex >= 7:
                 rowIndex = 0
                 columnIndex += 1
@@ -481,7 +472,6 @@ def create_grids_ship4_vertical(hints, starting_board):
             continue
         if rowIndex+1 in starting_board.complete_rows:
             rowIndex += 2
-            columnIndex == 0
             if rowIndex >= 7:
                 rowIndex = 0
                 columnIndex += 1
@@ -491,7 +481,6 @@ def create_grids_ship4_vertical(hints, starting_board):
             continue
         if rowIndex+2 in starting_board.complete_rows:
             rowIndex += 3
-            columnIndex == 0
             if rowIndex >= 7:
                 rowIndex = 0
                 columnIndex += 1
@@ -501,7 +490,6 @@ def create_grids_ship4_vertical(hints, starting_board):
             continue
         if rowIndex+3 in starting_board.complete_rows:
             rowIndex += 4
-            columnIndex == 0
             if rowIndex >= 7:
                 rowIndex = 0
                 columnIndex += 1
@@ -962,6 +950,8 @@ class Board:
                     # then we can instantly put it in the starting grid.
                     starting_grid[aux[0]][aux[1]] = CENTER
                     self.nships_of_size[0] += 1
+                    self.ships_placed_cols[aux[1]] += 1
+                    self.ships_placed_rows[aux[0]] += 1
 
                     if (aux[0]-1) != -1:
                         if (aux[1]-1) != -1:
@@ -983,7 +973,6 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'T':
                     hints_matrix[aux[0]][aux[1]] = TOP
-                    hints_matrix[aux[0]+1][aux[1]] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -1025,7 +1014,6 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'B':
                     hints_matrix[aux[0]][aux[1]] = BOTTOM
-                    hints_matrix[aux[0]-1][aux[1]] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-2 != -1:
@@ -1053,7 +1041,6 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+1] = WATER
                 case 'L':
                     hints_matrix[aux[0]][aux[1]] = LEFT
-                    hints_matrix[aux[0]][aux[1]+1] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -1078,7 +1065,6 @@ class Board:
                             starting_grid[aux[0]+1][aux[1]+2] = WATER
                 case 'R':
                     hints_matrix[aux[0]][aux[1]] = RIGHT
-                    hints_matrix[aux[0]][aux[1]-1] = MIDDLE
                     Board.hints_pos.append(tuple(map(int, aux)))
 
                     if aux[0]-1 != -1:
@@ -1147,10 +1133,10 @@ class Board:
         starting_board = Board([], [])
         starting_board.interpret_hints(nhints)
 
-        print(len(Board.grids_ship3_hor))
-        for i in range(len(Board.grids_ship3_hor)):
-            print(Board.grids_ship3_hor[i])
-            print(starting_board.can_place_ship3_h(Board.grids_ship3_hor[i][0][0], Board.grids_ship3_hor[i][0][1]))
+        print(len(Board.grids_ship1))
+        for i in range(len(Board.grids_ship1)):
+            print(Board.grids_ship1[i])
+            print(starting_board.can_place_ship1(Board.grids_ship1[i][0][0], Board.grids_ship1[i][0][1]))
 
         return starting_board
 
