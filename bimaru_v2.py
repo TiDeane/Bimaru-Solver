@@ -124,8 +124,6 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 grid = ((row, col), 2, "hor")
 
                 grids.append(grid)
-            else:
-                col += 1
 
         # proximo ponto
         col += 1
@@ -187,8 +185,6 @@ def create_grids_ship2_vertical(hints, starting_board):
                 grid = ((row, col), 2, "ver")
 
                 grids.append(grid)
-            else:
-                row += 1
 
         # proximo ponto
         row += 1
@@ -209,6 +205,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
     # poem LEFT MIDDLE RIGHT em todas posições onde pode estar na grid
     # existem no total no maximo 80 combinações diferentes de meter esse ship na horizontal
     for _ in range(80):
+
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]\
                 or Board.rows_nships[row] < 3\
                 or starting_board.ships_placed_rows[row] + 3 > Board.rows_nships[row]:
@@ -262,10 +259,6 @@ def create_grids_ship3_horizontal(hints, starting_board):
                     grid = ((row, col), 3, "hor")
 
                     grids.append(grid)
-                else:
-                    col += 2
-            else:
-                col += 1
 
         # proximo ponto
         col += 1
@@ -339,10 +332,6 @@ def create_grids_ship3_vertical(hints, starting_board):
                     grid = ((row, col), 3, "ver")
                     
                     grids.append(grid)
-                else:
-                    row += 2
-            else:
-                row += 1
 
         # proximo ponto
         row += 1
@@ -428,12 +417,6 @@ def create_grids_ship4_horizontal(hints, starting_board):
                         grid = ((row, col), 4, "hor")
                         
                         grids.append(grid)
-                    else:
-                        col += 3
-                else:
-                    col += 2
-            else:
-                col += 1
 
         # proximo ponto
         col += 1
@@ -522,12 +505,6 @@ def create_grids_ship4_vertical(hints, starting_board):
                         grid = ((row, col), 4, "ver")
                         
                         grids.append(grid)
-                    else:
-                        row += 3
-                else:
-                    row += 2
-            else:
-                row += 1
 
         # proximo ponto
         row += 1
@@ -562,8 +539,6 @@ class BimaruState:
 
     def __lt__(self, other):
         return self.id < other.id
-
-    # TODO: outros metodos da classe
 
 
 class Board:
@@ -733,10 +708,6 @@ class Board:
     
     def check_objective(self):
         """Returns True if the Board's grid is the puzzle's solution"""
-        print(self.ships_placed_rows)  #TODO remove these prints
-        print(Board.rows_nships)
-        print(self.ships_placed_cols)
-        print(Board.cols_nships)
         # Checks if all rows and columns have the required number of ships
         for n in range(10):
             if self.ships_placed_rows[n] != Board.rows_nships[n] or\
@@ -817,7 +788,7 @@ class Board:
             return actions
         
         elif self.nships_of_size[2] <= 1: # We need 2 ships of size 3 placed
-            
+
             for i in range(len(Board.grids_ship3_hor)):
                 row = Board.grids_ship3_hor[i][0][0]
                 col = Board.grids_ship3_hor[i][0][1]
@@ -1032,13 +1003,6 @@ class Board:
 
         self.grid = starting_grid
 
-        print("hints_pos:\n", Board.hints_pos)
-        
-        print("Hints matrix:\n", np.array(hints_matrix))
-
-        print("Starting grid:\n", np.array(self.grid))
-        print("Starting grid:\n", self)
-
         create_grids(hints_matrix, self)
 
     @staticmethod
@@ -1071,14 +1035,14 @@ class Board:
 
         return starting_board
 
-    def __str__(self): #TODO
+    def __str__(self):
         """Prints this Board's grid in the required format"""
 
         string_grid = ""
 
-        hints = []
+        hints = set()
         for pos in Board.hints_pos:
-            hints.append(pos[0]*10 + pos[1]) # (1,5) = 15, (5,8) = 58, etc
+            hints.add(pos[0]*10 + pos[1]) # (1,5) = 15, (5,8) = 58, etc
 
         for row in range(10):
             for col in range(10):
@@ -1123,7 +1087,7 @@ class Board:
                             string_grid += "C"
                         else:
                             string_grid += "c"
-                if col == 9:
+                if col == 9 and row != 9:
                     string_grid += "\n"
         return string_grid
 
@@ -1131,7 +1095,6 @@ class Board:
 class Bimaru(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        # TODO
         state = BimaruState(board)
         super().__init__(state)
         pass
@@ -1139,14 +1102,14 @@ class Bimaru(Problem):
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        return state.board.get_possible_actions()
+        actions = state.board.get_possible_actions()
+        return actions
 
     def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        #TODO
 
         row = action[0][0]
         col = action[0][1]
@@ -1154,9 +1117,13 @@ class Bimaru(Problem):
         orientation = action[2]
 
         new_grid = state.board.add_ship(action)
-        new_board = Board(new_grid, state.board.nships_of_size,\
-                    state.board.ships_placed_rows, state.board.ships_placed_cols)
-        new_board.nships_of_size[action[1]-1] += 1
+
+        new_nships_of_size = state.board.nships_of_size.copy()
+        new_ships_placed_rows = state.board.ships_placed_rows.copy()
+        new_ships_placed_cols = state.board.ships_placed_cols.copy()
+
+        new_nships_of_size[action[1]-1] += 1
+        new_board = Board(new_grid, new_nships_of_size, new_ships_placed_rows, new_ships_placed_cols)
 
         if orientation == "hor":
             match size:
@@ -1216,15 +1183,13 @@ class Bimaru(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # Quantos barcos falta colocar? Exemplo:
-        return 10 - sum(self.nships_of_size)
-        # return sum(self.nships_of_size), se darem prioridade ao maior número
-
-    # TODO: outros metodos da classe
+        # board = node.state.board
+        # return 10 - sum(board.nships_of_size)
+        # return sum(board.nships_of_size)
+        pass
 
 
 if __name__ == "__main__":
-    # TODO:
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
@@ -1232,45 +1197,7 @@ if __name__ == "__main__":
 
     board = Board.parse_instance()
     bimaru = Bimaru(board)
-    #goal_node = depth_first_tree_search(bimaru)
-    #print(goal_node.state.board)
-
-    s1 = BimaruState(board)
-    actions = s1.board.get_possible_actions()
-    print(actions)
-    s2 = bimaru.result(s1, actions[3])
-    print(s2.board)
-    actions = s2.board.get_possible_actions()
-    print(actions)
-    s3 = bimaru.result(s2, actions[2])
-    print(s3.board)
-    actions = s3.board.get_possible_actions()
-    print(actions)
-    s4 = bimaru.result(s3, actions[0])
-    print(s4.board)
-    actions = s4.board.get_possible_actions()
-    print(actions)
-    s5 = bimaru.result(s4, actions[2])
-    print(s5.board)
-    actions = s5.board.get_possible_actions()
-    print(actions)
-    s6 = bimaru.result(s5, actions[1])
-    print(s6.board)
-    actions = s6.board.get_possible_actions()
-    print(actions)
-    s7 = bimaru.result(s6, actions[0])
-    print(s7.board)
-    actions = s7.board.get_possible_actions()
-    print(actions)
-    s8 = bimaru.result(s7, actions[0])
-    print(s8.board)
-    actions = s8.board.get_possible_actions()
-    print(actions)
-    s9 = bimaru.result(s8, actions[0])
-    print(s9.board)
-    actions = s9.board.get_possible_actions()
-    print(actions)
-
-    print(s9.board.check_objective())
+    goal_node = depth_first_tree_search(bimaru)
+    print(goal_node.state.board)
 
     pass
