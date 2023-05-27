@@ -850,156 +850,161 @@ class Board:
 
             aux = tuple(map(int, hints_aux[1:3]))
 
-            match hints_aux[3]:
-                case 'W':
-                    hints_matrix[aux[0]][aux[1]] = WATER
-                    starting_grid[aux[0]][aux[1]] = WATER
-                    Board.hints_pos.append(tuple(map(int, aux)))
-                case 'C':
-                    hints_matrix[aux[0]][aux[1]] = CENTER
-                    Board.hints_pos.append(tuple(map(int, aux)))
+            if hints_aux[3] == 'W':
+                hints_matrix[aux[0]][aux[1]] = WATER
+                starting_grid[aux[0]][aux[1]] = WATER
+                Board.hints_pos.append(tuple(map(int, aux)))
+            
+            elif hints_aux[3] == 'C':
+                hints_matrix[aux[0]][aux[1]] = CENTER
+                Board.hints_pos.append(tuple(map(int, aux)))
 
-                    # If the hint says there is a submarine in this position,
-                    # then we can instantly put it in the starting grid.
-                    starting_grid[aux[0]][aux[1]] = CENTER
-                    self.nships_of_size[0] += 1
-                    self.ships_placed_cols[aux[1]] += 1
-                    self.ships_placed_rows[aux[0]] += 1
+                # If the hint says there is a submarine in this position,
+                # then we can instantly put it in the starting grid.
+                starting_grid[aux[0]][aux[1]] = CENTER
+                self.nships_of_size[0] += 1
+                self.ships_placed_cols[aux[1]] += 1
+                self.ships_placed_rows[aux[0]] += 1
 
-                    if (aux[0]-1) != -1:
-                        if (aux[1]-1) != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        starting_grid[aux[0]-1][aux[1]] = WATER
-                        if (aux[1]+1) != 10:
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
-
+                if (aux[0]-1) != -1:
                     if (aux[1]-1) != -1:
-                        starting_grid[aux[0]][aux[1]-1] = WATER
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    starting_grid[aux[0]-1][aux[1]] = WATER
                     if (aux[1]+1) != 10:
-                        starting_grid[aux[0]][aux[1]+1] = WATER
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
 
-                    if (aux[0]+1) != 10:
-                        if (aux[1]-1) != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        starting_grid[aux[0]+1][aux[1]] = WATER
-                        if (aux[1]+1) != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
-                case 'T':
-                    hints_matrix[aux[0]][aux[1]] = TOP
-                    Board.hints_pos.append(tuple(map(int, aux)))
+                if (aux[1]-1) != -1:
+                    starting_grid[aux[0]][aux[1]-1] = WATER
+                if (aux[1]+1) != 10:
+                    starting_grid[aux[0]][aux[1]+1] = WATER
 
-                    if aux[0]-1 != -1:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        starting_grid[aux[0]-1][aux[1]] = WATER
-                        if aux[1]+1 != 10: 
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
+                if (aux[0]+1) != 10:
+                    if (aux[1]-1) != -1:
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
+                    starting_grid[aux[0]+1][aux[1]] = WATER
+                    if (aux[1]+1) != 10:
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
 
+            elif hints_aux[3] == 'T':
+                hints_matrix[aux[0]][aux[1]] = TOP
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                if aux[0]-1 != -1:
                     if aux[1]-1 != -1:
-                        starting_grid[aux[0]][aux[1]-1] = WATER
-                    if aux[1]+1 != 10:
-                        starting_grid[aux[0]][aux[1]+1] = WATER
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    starting_grid[aux[0]-1][aux[1]] = WATER
+                    if aux[1]+1 != 10: 
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
 
-                    if aux[0]+1 != 10:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
-                    if aux[0]+2 != 10:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+2][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+2][aux[1]+1] = WATER
-                case 'M':
-                    hints_matrix[aux[0]][aux[1]] = MIDDLE
-                    Board.hints_pos.append(tuple(map(int, aux)))
+                if aux[1]-1 != -1:
+                    starting_grid[aux[0]][aux[1]-1] = WATER
+                if aux[1]+1 != 10:
+                    starting_grid[aux[0]][aux[1]+1] = WATER
 
-                    if aux[0]-1 != -1:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
-
-                    if aux[0]+1 != 10:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
-                case 'B':
-                    hints_matrix[aux[0]][aux[1]] = BOTTOM
-                    Board.hints_pos.append(tuple(map(int, aux)))
-
-                    if aux[0]-2 != -1:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-2][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]-2][aux[1]+1] = WATER
-
-                    if aux[0]-1 != -1:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
-
+                if aux[0]+1 != 10:
                     if aux[1]-1 != -1:
-                        starting_grid[aux[0]][aux[1]-1] = WATER
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
                     if aux[1]+1 != 10:
-                        starting_grid[aux[0]][aux[1]+1] = WATER
-
-                    if aux[0]+1 != 10:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        starting_grid[aux[0]+1][aux[1]] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
-                case 'L':
-                    hints_matrix[aux[0]][aux[1]] = LEFT
-                    Board.hints_pos.append(tuple(map(int, aux)))
-
-                    if aux[0]-1 != -1:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        starting_grid[aux[0]-1][aux[1]] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
-                        if aux[1]+2 != 10:
-                            starting_grid[aux[0]-1][aux[1]+2] = WATER
-
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
+                if aux[0]+2 != 10:
                     if aux[1]-1 != -1:
-                        starting_grid[aux[0]][aux[1]-1] = WATER
-
-                    if aux[0]+1 != 10:
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        starting_grid[aux[0]+1][aux[1]] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
-                        if aux[1]+2 != 10:
-                            starting_grid[aux[0]+1][aux[1]+2] = WATER
-                case 'R':
-                    hints_matrix[aux[0]][aux[1]] = RIGHT
-                    Board.hints_pos.append(tuple(map(int, aux)))
-
-                    if aux[0]-1 != -1:
-                        if aux[1]-2 != -1:
-                            starting_grid[aux[0]-1][aux[1]-2] = WATER
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]-1][aux[1]-1] = WATER
-                        starting_grid[aux[0]-1][aux[1]] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]-1][aux[1]+1] = WATER
-
+                        starting_grid[aux[0]+2][aux[1]-1] = WATER
                     if aux[1]+1 != 10:
-                        starting_grid[aux[0]][aux[1]+1] = WATER
+                        starting_grid[aux[0]+2][aux[1]+1] = WATER
 
-                    if aux[0]+1 != 10:
-                        if aux[1]-2 != -1:
-                            starting_grid[aux[0]+1][aux[1]-2] = WATER
-                        if aux[1]-1 != -1:
-                            starting_grid[aux[0]+1][aux[1]-1] = WATER
-                        starting_grid[aux[0]+1][aux[1]] = WATER
-                        if aux[1]+1 != 10:
-                            starting_grid[aux[0]+1][aux[1]+1] = WATER
+            elif hints_aux[3] == 'M':
+                hints_matrix[aux[0]][aux[1]] = MIDDLE
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                if aux[0]-1 != -1:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
+
+                if aux[0]+1 != 10:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
+
+            elif hints_aux[3] == 'B':
+                hints_matrix[aux[0]][aux[1]] = BOTTOM
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                if aux[0]-2 != -1:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]-2][aux[1]-1] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]-2][aux[1]+1] = WATER
+
+                if aux[0]-1 != -1:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
+
+                if aux[1]-1 != -1:
+                    starting_grid[aux[0]][aux[1]-1] = WATER
+                if aux[1]+1 != 10:
+                    starting_grid[aux[0]][aux[1]+1] = WATER
+
+                if aux[0]+1 != 10:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
+                    starting_grid[aux[0]+1][aux[1]] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
+            
+            elif hints_aux[3] == 'L':
+                hints_matrix[aux[0]][aux[1]] = LEFT
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                if aux[0]-1 != -1:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    starting_grid[aux[0]-1][aux[1]] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
+                    if aux[1]+2 != 10:
+                        starting_grid[aux[0]-1][aux[1]+2] = WATER
+
+                if aux[1]-1 != -1:
+                    starting_grid[aux[0]][aux[1]-1] = WATER
+
+                if aux[0]+1 != 10:
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
+                    starting_grid[aux[0]+1][aux[1]] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
+                    if aux[1]+2 != 10:
+                        starting_grid[aux[0]+1][aux[1]+2] = WATER
+            
+            elif hints_aux[3] == 'R':
+                hints_matrix[aux[0]][aux[1]] = RIGHT
+                Board.hints_pos.append(tuple(map(int, aux)))
+
+                if aux[0]-1 != -1:
+                    if aux[1]-2 != -1:
+                        starting_grid[aux[0]-1][aux[1]-2] = WATER
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]-1][aux[1]-1] = WATER
+                    starting_grid[aux[0]-1][aux[1]] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]-1][aux[1]+1] = WATER
+
+                if aux[1]+1 != 10:
+                    starting_grid[aux[0]][aux[1]+1] = WATER
+
+                if aux[0]+1 != 10:
+                    if aux[1]-2 != -1:
+                        starting_grid[aux[0]+1][aux[1]-2] = WATER
+                    if aux[1]-1 != -1:
+                        starting_grid[aux[0]+1][aux[1]-1] = WATER
+                    starting_grid[aux[0]+1][aux[1]] = WATER
+                    if aux[1]+1 != 10:
+                        starting_grid[aux[0]+1][aux[1]+1] = WATER
 
         self.grid = starting_grid
 
@@ -1046,49 +1051,58 @@ class Board:
 
         for row in range(10):
             for col in range(10):
-                match self.grid[row][col]:
-                    case -1:
-                        if (row*10 + col) in hints:
-                            string_grid += "W"
-                        else:
-                            string_grid += "."
-                    case 0:
-                        if (row*10 + col) in hints:
-                            string_grid += "W"
-                        else:
-                            string_grid += "."
-                    case 1:
-                        if (row*10 + col) in hints:
-                            string_grid += "L"
-                        else:
-                            string_grid += "l"
-                    case 2:
-                        if (row*10 + col) in hints:
-                            string_grid += "R"
-                        else:
-                            string_grid += "r"
-                    case 3:
-                        if (row*10 + col) in hints:
-                            string_grid += "T"
-                        else:
-                            string_grid += "t"
-                    case 4:
-                        if (row*10 + col) in hints:
-                            string_grid += "B"
-                        else:
-                            string_grid += "b"
-                    case 5:
-                        if (row*10 + col) in hints:
-                            string_grid += "M"
-                        else:
-                            string_grid += "m"
-                    case 6:
-                        if (row*10 + col) in hints:
-                            string_grid += "C"
-                        else:
-                            string_grid += "c"
+
+                if self.grid[row][col] == -1:
+                    if (row*10 + col) in hints:
+                        string_grid += "W"
+                    else:
+                        string_grid += "."
+
+                elif self.grid[row][col] == 0:
+                    if (row*10 + col) in hints:
+                        string_grid += "W"
+                    else:
+                        string_grid += "."
+                
+                elif self.grid[row][col] == 1:
+                    if (row*10 + col) in hints:
+                        string_grid += "L"
+                    else:
+                        string_grid += "l"
+                
+                elif self.grid[row][col] == 2:
+                    if (row*10 + col) in hints:
+                        string_grid += "R"
+                    else:
+                        string_grid += "r"
+
+                elif self.grid[row][col] == 3:
+                    if (row*10 + col) in hints:
+                        string_grid += "T"
+                    else:
+                        string_grid += "t"
+                
+                elif self.grid[row][col] == 4:
+                    if (row*10 + col) in hints:
+                        string_grid += "B"
+                    else:
+                        string_grid += "b"
+                
+                elif self.grid[row][col] == 5:
+                    if (row*10 + col) in hints:
+                        string_grid += "M"
+                    else:
+                        string_grid += "m"
+                
+                elif self.grid[row][col] == 6:
+                    if (row*10 + col) in hints:
+                        string_grid += "C"
+                    else:
+                        string_grid += "c"
+
                 if col == 9 and row != 9:
                     string_grid += "\n"
+                    
         return string_grid
 
 
@@ -1126,52 +1140,50 @@ class Bimaru(Problem):
         new_board = Board(new_grid, new_nships_of_size, new_ships_placed_rows, new_ships_placed_cols)
 
         if orientation == "hor":
-            match size:
-                case 4:
-                    new_board.ships_placed_rows[row] += 4
-                    new_board.ships_placed_cols[col] += 1
-                    new_board.ships_placed_cols[col+1] += 1
-                    new_board.ships_placed_cols[col+2] += 1
-                    new_board.ships_placed_cols[col+3] += 1
-                    
-                case 3:
-                    new_board.ships_placed_rows[row] += 3
-                    new_board.ships_placed_cols[col] += 1
-                    new_board.ships_placed_cols[col+1] += 1
-                    new_board.ships_placed_cols[col+2] += 1
+            if size == 4:
+                new_board.ships_placed_rows[row] += 4
+                new_board.ships_placed_cols[col] += 1
+                new_board.ships_placed_cols[col+1] += 1
+                new_board.ships_placed_cols[col+2] += 1
+                new_board.ships_placed_cols[col+3] += 1
 
-                case 2:
-                    new_board.ships_placed_rows[row] += 2
-                    new_board.ships_placed_cols[col] += 1
-                    new_board.ships_placed_cols[col+1] += 1
+            elif size == 3:
+                new_board.ships_placed_rows[row] += 3
+                new_board.ships_placed_cols[col] += 1
+                new_board.ships_placed_cols[col+1] += 1
+                new_board.ships_placed_cols[col+2] += 1
 
-                case 1:
-                    new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_cols[col] += 1
+            elif size == 2:
+                new_board.ships_placed_rows[row] += 2
+                new_board.ships_placed_cols[col] += 1
+                new_board.ships_placed_cols[col+1] += 1
+
+            elif size == 1:
+                new_board.ships_placed_rows[row] += 1
+                new_board.ships_placed_cols[col] += 1
 
         else: # orientation = "ver"
-            match size:
-                case 4:
-                    new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_rows[row+1] += 1
-                    new_board.ships_placed_rows[row+2] += 1
-                    new_board.ships_placed_rows[row+3] += 1
-                    new_board.ships_placed_cols[col] += 4
+            if size == 4:
+                new_board.ships_placed_rows[row] += 1
+                new_board.ships_placed_rows[row+1] += 1
+                new_board.ships_placed_rows[row+2] += 1
+                new_board.ships_placed_rows[row+3] += 1
+                new_board.ships_placed_cols[col] += 4
 
-                case 3:
-                    new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_rows[row+1] += 1
-                    new_board.ships_placed_rows[row+2] += 1
-                    new_board.ships_placed_cols[col] += 3
+            elif size == 3:
+                new_board.ships_placed_rows[row] += 1
+                new_board.ships_placed_rows[row+1] += 1
+                new_board.ships_placed_rows[row+2] += 1
+                new_board.ships_placed_cols[col] += 3
 
-                case 2:
-                    new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_rows[row+1] += 1
-                    new_board.ships_placed_cols[col] += 2
+            elif size == 2:
+                new_board.ships_placed_rows[row] += 1
+                new_board.ships_placed_rows[row+1] += 1
+                new_board.ships_placed_cols[col] += 2
 
-                case 1:
-                    new_board.ships_placed_rows[row] += 1
-                    new_board.ships_placed_cols[col] += 1
+            elif size == 1:
+                new_board.ships_placed_rows[row] += 1
+                new_board.ships_placed_cols[col] += 1
 
         return BimaruState(new_board)
 
