@@ -1,3 +1,25 @@
+"""
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠈⢻⣿⣿⡄⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ 
+⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ 
+⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ 
+⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ 
+⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ 
+⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ 
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
+⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ 
+⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ 
+⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⢠⣿⣿⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
+⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+"""
+
 """ delete later """
 
 import numpy as np
@@ -13,6 +35,112 @@ BOTTOM = 4
 MIDDLE = 5
 CENTER = 6
 
+def is_left_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == LEFT) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != MIDDLE) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != LEFT) and\
+        (columnIndex < 2 or board[rowIndex][columnIndex - 2] != LEFT) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != MIDDLE) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != MIDDLE) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != TOP) and\
+        (rowIndex < 2 or board[rowIndex - 2][columnIndex] != TOP) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != BOTTOM) and\
+        (rowIndex > 7 or board[rowIndex + 2][columnIndex] != BOTTOM):
+            return True
+    else:
+        return False
+
+def is_right_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == CENTER) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != MIDDLE) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != RIGHT) and\
+        (columnIndex > 7 or board[rowIndex][columnIndex + 2] != RIGHT) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != MIDDLE) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != MIDDLE) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != TOP) and\
+        (rowIndex < 2 or board[rowIndex - 2][columnIndex] != TOP) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != BOTTOM) and\
+        (rowIndex > 7 or board[rowIndex + 2][columnIndex] != BOTTOM):
+            return True
+    else:
+        return False
+
+def is_top_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == TOP) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != MIDDLE) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != MIDDLE) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != LEFT) and\
+        (columnIndex < 2 or board[rowIndex][columnIndex - 2] != LEFT) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != RIGHT) and\
+        (columnIndex > 7 or board[rowIndex][columnIndex + 2] != RIGHT) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != MIDDLE) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != TOP) and\
+        (rowIndex < 2 or board[rowIndex - 2][columnIndex] != TOP):
+            return True
+    else:
+        return False
+
+def is_bottom_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == BOTTOM) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != MIDDLE) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != MIDDLE) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != LEFT) and\
+        (columnIndex < 2 or board[rowIndex][columnIndex - 2] != LEFT) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != RIGHT) and\
+        (columnIndex > 7 or board[rowIndex][columnIndex + 2] != RIGHT) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != MIDDLE) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != BOTTOM) and\
+        (rowIndex > 7 or board[rowIndex + 2][columnIndex] != BOTTOM):
+            return True
+    else:
+        return False
+
+def is_middle_hor_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == MIDDLE) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != TOP) and\
+        (rowIndex < 2 or board[rowIndex - 2][columnIndex] != TOP) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != BOTTOM) and\
+        (rowIndex > 7 or board[rowIndex + 2][columnIndex] != BOTTOM):
+            return True
+    else:
+        return False
+    
+def is_middle_ver_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == MIDDLE) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != LEFT) and\
+        (columnIndex < 2 or board[rowIndex][columnIndex - 2] != LEFT) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != RIGHT) and\
+        (columnIndex > 7 or board[rowIndex][columnIndex + 2] != RIGHT):
+            return True
+    else:
+        return False
+
+def is_center_possible(columnIndex, rowIndex, board):
+    if (board[rowIndex][columnIndex] == UNKNOWN or
+        board[rowIndex][columnIndex] == CENTER) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != MIDDLE) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != MIDDLE) and\
+        (columnIndex < 1 or board[rowIndex][columnIndex - 1] != LEFT) and\
+        (columnIndex < 2 or board[rowIndex][columnIndex - 2] != LEFT) and\
+        (columnIndex > 8 or board[rowIndex][columnIndex + 1] != RIGHT) and\
+        (columnIndex > 7 or board[rowIndex][columnIndex + 2] != RIGHT) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != MIDDLE) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != MIDDLE) and\
+        (rowIndex < 1 or board[rowIndex - 1][columnIndex] != TOP) and\
+        (rowIndex < 2 or board[rowIndex - 2][columnIndex] != TOP) and\
+        (rowIndex > 8 or board[rowIndex + 1][columnIndex] != BOTTOM) and\
+        (rowIndex > 7 or board[rowIndex + 2][columnIndex] != BOTTOM):
+            return True
+    else:
+        return False
+
+
 def create_grids_ship1(board):
     grids = []
     rowIndex = 0
@@ -22,10 +150,9 @@ def create_grids_ship1(board):
     # existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
         # cria a grid com o barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == CENTER):
+        if is_center_possible(columnIndex, rowIndex, board):
 
-            grid = [[9] * 10 for _ in range(10)]
+            grid = [[-1] * 10 for _ in range(10)]
             grid[rowIndex][columnIndex] = CENTER
             # desenha agua em cima do barco
             if rowIndex > 0:
@@ -64,13 +191,11 @@ def create_grids_ship2_horizontal(board):
     # existem no total no maximo 90 cominações diferentes de meter esse ship na horizontal
     for _ in range(90):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if is_left_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
-                board[rowIndex][columnIndex + 1] == RIGHT):
+            if is_left_possible(columnIndex + 1, rowIndex, board):
                 
-                grid = [[9] * 10 for _ in range(10)]
+                grid = [[-1] * 10 for _ in range(10)]
                 # desenha o barco
                 grid[rowIndex][columnIndex] = LEFT
                 grid[rowIndex][columnIndex + 1] = RIGHT
@@ -113,13 +238,11 @@ def create_grids_ship2_vertical(board):
     # existem no total no maximo 90 cominações diferentes de meter esse ship na vertical
     for _ in range(90):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if is_top_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
-                board[rowIndex + 1][columnIndex] == BOTTOM):
+            if is_bottom_possible(columnIndex, rowIndex + 1, board):
                 
-                grid = [[9] * 10 for _ in range(10)]
+                grid = [[-1] * 10 for _ in range(10)]
                 grid[rowIndex][columnIndex] = TOP
                 grid[rowIndex + 1][columnIndex] = BOTTOM
                 # desenha agua do lado esquerdo do barco
@@ -161,16 +284,13 @@ def create_grids_ship3_horizontal(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na horizontal
     for _ in range(80):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if is_left_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
-                board[rowIndex][columnIndex + 1] == MIDDLE):
+            if is_middle_hor_possible(columnIndex + 1, rowIndex, board):
                 
-                if (board[rowIndex][columnIndex + 2] == UNKNOWN or
-                board[rowIndex][columnIndex + 2] == RIGHT):
+                if is_right_possible(columnIndex + 2, rowIndex, board):
                     
-                    grid = [[9] * 10 for _ in range(10)]
+                    grid = [[-1] * 10 for _ in range(10)]
                     grid[rowIndex][columnIndex] = LEFT
                     grid[rowIndex][columnIndex + 1] = MIDDLE
                     grid[rowIndex][columnIndex + 2] = RIGHT
@@ -191,7 +311,8 @@ def create_grids_ship3_horizontal(board):
                         grid[rowIndex][columnIndex + 3] = WATER
                     grids.append(grid)
                 else:
-                    columnIndex += 2
+                    if board[rowIndex][columnIndex + 2] != MIDDLE:
+                        columnIndex += 2
             else:
                 columnIndex += 1
 
@@ -215,16 +336,13 @@ def create_grids_ship3_vertical(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na vertical
     for _ in range(80):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if is_top_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
-                board[rowIndex + 1][columnIndex] == MIDDLE):
+            if is_middle_ver_possible(columnIndex, rowIndex + 1, board):
 
-                if (board[rowIndex + 2][columnIndex] == UNKNOWN or
-                    board[rowIndex + 2][columnIndex] == BOTTOM):
+                if is_bottom_possible(columnIndex, rowIndex + 2, board):
                     
-                    grid = [[9] * 10 for _ in range(10)]
+                    grid = [[-1] * 10 for _ in range(10)]
                     grid[rowIndex][columnIndex] = TOP
                     grid[rowIndex + 1][columnIndex] = MIDDLE
                     grid[rowIndex + 2][columnIndex] = BOTTOM
@@ -245,9 +363,10 @@ def create_grids_ship3_vertical(board):
                         grid[rowIndex + 3][columnIndex] = WATER
                     grids.append(grid)
                 else:
-                    rowIndex += 2
+                    if board[rowIndex][columnIndex + 2] != MIDDLE:
+                        columnIndex += 2
             else:
-                rowIndex += 1
+                columnIndex += 1
 
         # proximo ponto
         rowIndex += 1
@@ -269,19 +388,15 @@ def create_grids_ship4_horizontal(board):
     # existem no total no maximo 70 cominações diferentes de meter esse ship na horizontal
     for _ in range(70):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == LEFT):
+        if is_left_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex][columnIndex + 1] == UNKNOWN or
-                board[rowIndex][columnIndex + 1] == MIDDLE):
+            if is_middle_hor_possible(columnIndex + 1, rowIndex, board):
 
-                if (board[rowIndex][columnIndex + 2] == UNKNOWN or
-                    board[rowIndex][columnIndex + 2] == MIDDLE):
+                if is_middle_hor_possible(columnIndex + 2, rowIndex, board):
                     
-                    if (board[rowIndex][columnIndex + 3] == UNKNOWN or
-                    board[rowIndex][columnIndex + 3] == RIGHT):
+                    if is_right_possible(columnIndex + 3, rowIndex, board):
                         
-                        grid = [[9] * 10 for _ in range(10)]
+                        grid = [[-1] * 10 for _ in range(10)]
                         grid[rowIndex][columnIndex] = LEFT
                         grid[rowIndex][columnIndex + 1] = MIDDLE
                         grid[rowIndex][columnIndex + 2] = MIDDLE
@@ -303,7 +418,8 @@ def create_grids_ship4_horizontal(board):
                             grid[rowIndex][columnIndex + 4] = WATER
                         grids.append(grid)
                     else:
-                        columnIndex += 3
+                        if board[rowIndex][columnIndex + 3] != MIDDLE:
+                            columnIndex += 3
                 else:
                     columnIndex += 2
             else:
@@ -329,19 +445,15 @@ def create_grids_ship4_vertical(board):
     # existem no total no maximo 80 cominações diferentes de meter esse ship na vertical
     for _ in range(70):
         # cria a grid com o barco se for uma posição onde possa haver esse barco
-        if (board[rowIndex][columnIndex] == UNKNOWN or
-            board[rowIndex][columnIndex] == TOP):
+        if is_top_possible(columnIndex, rowIndex, board):
             
-            if (board[rowIndex + 1][columnIndex] == UNKNOWN or
-                board[rowIndex + 1][columnIndex] == MIDDLE):
+            if is_middle_ver_possible(columnIndex, rowIndex + 1, board):
                 
-                if (board[rowIndex + 2][columnIndex] == UNKNOWN or
-                    board[rowIndex + 2][columnIndex] == MIDDLE):
+                if is_middle_ver_possible(columnIndex, rowIndex + 2, board):
                     
-                    if (board[rowIndex + 3][columnIndex] == UNKNOWN or
-                        board[rowIndex + 3][columnIndex] == BOTTOM):
+                    if is_bottom_possible(columnIndex, rowIndex + 3, board):
                         
-                        grid = [[9] * 10 for _ in range(10)]
+                        grid = [[-1] * 10 for _ in range(10)]
                         grid[rowIndex][columnIndex] = TOP
                         grid[rowIndex + 1][columnIndex] = MIDDLE
                         grid[rowIndex + 2][columnIndex] = MIDDLE
@@ -364,7 +476,8 @@ def create_grids_ship4_vertical(board):
 
                         grids.append(grid)
                     else:
-                        rowIndex += 3
+                        if board[rowIndex + 3][columnIndex] != MIDDLE:
+                            rowIndex += 3
                 else:
                     rowIndex += 2
             else:
@@ -388,52 +501,74 @@ def create_grids(board):
             create_grids_ship4_horizontal(board) + create_grids_ship4_vertical(board))
 
 def print_all_grids(grids):
-    gridNum = 0
     for grid in grids:
         print_grid(grid)
         print()
 
 def print_grid(grid):
+    linha = 0
     for i in range(10):
         for j in range(10):
+            if grid[i][j] != -1:
+                print(" ", end="")
             print(grid[i][j], end="")
-        print()
+        print(" linha: " + str(linha))
+        linha += 1
 
 """ UNKNOWN = -1, WATER = 0, LEFT = 1, RIGHT = 2, TOP = 3, BOTTOM = 4, MIDDLE = 5, CENTER = 6 """
-
+"""
 starting_board = [
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, 0, -1,  0,  0,  0, -1, -1, -1],
-    [-1, -1, 0, -1,  0,  6,  0, -1, -1, -1],
-    [-1, -1, 0, -1,  0,  0,  0, -1, -1, -1],
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1],
-    [ 0,  0, 0,  0,  0,  0,  0,  0,  0,  0],
-    [-1, -1, 0, -1, -1, -1, -1, -1, -1, -1]
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER],
+    [WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER, WATER]
+]
+"""
+starting_board = [
+    [WATER, LEFT, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [WATER, WATER, WATER, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN]
 ]
 
-print_all_grids(create_grids(starting_board))
+instance03 = [
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, WATER],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, WATER, WATER, CENTER],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, TOP, WATER, WATER],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, UNKNOWN, WATER, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, UNKNOWN, WATER, WATER, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, BOTTOM, WATER, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, WATER, UNKNOWN, WATER, WATER, WATER, WATER, UNKNOWN, UNKNOWN, UNKNOWN],
+    [UNKNOWN, UNKNOWN, MIDDLE, UNKNOWN, WATER, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN],
+    [WATER, WATER, WATER, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, WATER, UNKNOWN, UNKNOWN],
+    [WATER, CENTER, WATER, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN, UNKNOWN]
+]
 
-"""
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣤⣤⣤⣤⣤⣤⣤⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⡿⠛⠉⠙⠛⠛⠛⠛⠻⢿⣿⣷⣤⡀⠀⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⠋⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⠈⢻⣿⣿⡄⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣸⣿⡏⠀⠀⠀⣠⣶⣾⣿⣿⣿⠿⠿⠿⢿⣿⣿⣿⣄⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠁⠀⠀⢰⣿⣿⣯⠁⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣷⡄⠀ 
-⠀⠀⣀⣤⣴⣶⣶⣿⡟⠀⠀⠀⢸⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⠀ 
-⠀⢰⣿⡟⠋⠉⣹⣿⡇⠀⠀⠀⠘⣿⣿⣿⣿⣷⣦⣤⣤⣤⣶⣶⣶⣶⣿⣿⣿⠀ 
-⠀⢸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠀ 
-⠀⣸⣿⡇⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠉⠻⠿⣿⣿⣿⣿⡿⠿⠿⠛⢻⣿⡇⠀⠀ 
-⠀⣿⣿⠁⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣧⠀⠀ 
-⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
-⠀⣿⣿⠀⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀ 
-⠀⢿⣿⡆⠀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀ 
-⠀⠸⣿⣧⡀⠀⣿⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀ 
-⠀⠀⠛⢿⣿⣿⣿⣿⣇⠀⠀⠀⠀⠀⣰⣿⣿⣷⣶⣶⣶⣶⠶⠀⢠⣿⣿⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣽⣿⡏⠁⠀⠀⢸⣿⡇⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
-⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-"""
+
+#print_all_grids(create_grids_ship1(starting_board))
+
+#print_all_grids(create_grids_ship2_horizontal(starting_board))
+
+#print_all_grids(create_grids_ship2_vertical(starting_board))
+
+#print_all_grids(create_grids_ship3_horizontal(starting_board))
+
+#print_all_grids(create_grids_ship3_vertical(starting_board))
+
+#print_all_grids(create_grids_ship4_horizontal(starting_board))
+
+#print_all_grids(create_grids_ship4_vertical(starting_board))
+
+print_all_grids(create_grids(instance03))
