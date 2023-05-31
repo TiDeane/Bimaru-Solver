@@ -437,3 +437,16 @@ print_all_grids(create_grids(starting_board))
 ⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀ 
 ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 """
+
+
+def get_multiplier(self):
+        multiplier = 0
+        for i in range(10): # +1 for every completed row or column
+            if self.ships_placed_rows[i] == Board.rows_nships[i]:
+                multiplier += 1
+            if self.ships_placed_cols[i] == Board.cols_nships[i]:
+                multiplier += 1
+        for pos in Board.hints_pos: # +1 for every hint placed
+            if self.grid[pos[0]][pos[1]] >= 0:
+                multiplier += 1
+        return multiplier

@@ -544,9 +544,10 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    # Saves the number of ships required in each row and column from 0 to 9
-    rows_nships = np.array(10)
-    cols_nships = np.array(10)
+    # Saves the number of ships required in each row and column from 0 to 9.
+    # They are constructed during parse_instance()
+    rows_nships = []
+    cols_nships = []
 
     # Saves the positions that MUST have ships in the final solution
     hints_pos = []
@@ -569,19 +570,19 @@ class Board:
 
         # ships_placed_rows[n] holds how many ships have been placed in row n
         if len(ships_placed_rows) == 0:
-            self.ships_placed_rows = np.zeros(10, np.uint8)
+            self.ships_placed_rows = [0 for _ in range(10)]
         else:
             self.ships_placed_rows = ships_placed_rows
         
         # ships_placed_cols[n] holds how many ships have been placed in column n
         if len(ships_placed_cols) == 0:
-            self.ships_placed_cols = np.zeros(10, np.uint8)
+            self.ships_placed_cols = [0 for _ in range(10)]
         else:
             self.ships_placed_cols = ships_placed_cols
 
         # Index 'i' has the number of ships of size i+1 placed in this Board's grid
         if len(nships_of_size) == 0:
-            self.nships_of_size = np.zeros(4, np.uint8)
+            self.nships_of_size = [0 for _ in range(4)]
         else:
             self.nships_of_size = nships_of_size
 
@@ -726,7 +727,7 @@ class Board:
             return False
                 
         return True
-    
+
     def add_ship(self, ship_grid):
         """Returns a new 10x10 grid that is the combination of this Board's grid
         and the ship grid given as argument"""
@@ -774,56 +775,59 @@ class Board:
 
         if self.nships_of_size[3] == 0: # We need 1 ship of size 4 placed
 
-            for i in range(len(Board.grids_ship4_hor)):
-                row = Board.grids_ship4_hor[i][0][0]
-                col = Board.grids_ship4_hor[i][0][1]
+            for grid in Board.grids_ship4_hor:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship4_h(row, col):
-                    actions.append(Board.grids_ship4_hor[i])
-            for i in range(len(Board.grids_ship4_ver)):
-                row = Board.grids_ship4_ver[i][0][0]
-                col = Board.grids_ship4_ver[i][0][1]
+                    actions.append(grid)
+            
+            for grid in Board.grids_ship4_ver:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship4_v(row, col):
-                    actions.append(Board.grids_ship4_ver[i])
+                    actions.append(grid)
 
             return actions
         
         elif self.nships_of_size[2] <= 1: # We need 2 ships of size 3 placed
 
-            for i in range(len(Board.grids_ship3_hor)):
-                row = Board.grids_ship3_hor[i][0][0]
-                col = Board.grids_ship3_hor[i][0][1]
+            for grid in Board.grids_ship3_hor:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship3_h(row, col):
-                    actions.append(Board.grids_ship3_hor[i])
-            for i in range(len(Board.grids_ship3_ver)):
-                row = Board.grids_ship3_ver[i][0][0]
-                col = Board.grids_ship3_ver[i][0][1]
+                    actions.append(grid)
+            
+            for grid in Board.grids_ship3_ver:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship3_v(row, col):
-                    actions.append(Board.grids_ship3_ver[i])
+                    actions.append(grid)
 
             return actions
         
         elif self.nships_of_size[1] <= 2: # We need 3 ships of size 2 placed
 
-            for i in range(len(Board.grids_ship2_hor)):
-                row = Board.grids_ship2_hor[i][0][0]
-                col = Board.grids_ship2_hor[i][0][1]
+            for grid in Board.grids_ship2_hor:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship2_h(row, col):
-                    actions.append(Board.grids_ship2_hor[i])
-            for i in range(len(Board.grids_ship2_ver)):
-                row = Board.grids_ship2_ver[i][0][0]
-                col = Board.grids_ship2_ver[i][0][1]
+                    actions.append(grid)
+            
+            for grid in Board.grids_ship2_ver:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship2_v(row, col):
-                    actions.append(Board.grids_ship2_ver[i])
+                    actions.append(grid)
 
             return actions
         
         elif self.nships_of_size[0] <= 3: # We need 4 ships of size 1 placed
 
-            for i in range(len(Board.grids_ship1)):
-                row = Board.grids_ship1[i][0][0]
-                col = Board.grids_ship1[i][0][1]
+            for grid in Board.grids_ship1:
+                row = grid[0][0]
+                col = grid[0][1]
                 if self.can_place_ship1(row, col):
-                    actions.append(Board.grids_ship1[i])
+                    actions.append(grid)
 
             return actions
         else:
@@ -841,7 +845,7 @@ class Board:
         - Creates all possible grids to be added to the starting grid"""
 
         # A matrix with the hints' ships and water spots placed
-        hints_matrix = np.array([[-1] * 10 for _ in range(10)])
+        hints_matrix = [[-1] * 10 for _ in range(10)]
         starting_grid = [[-1 for _ in range(10)] for _ in range(10)]
 
         for _ in range(nhints):
@@ -1195,9 +1199,6 @@ class Bimaru(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # board = node.state.board
-        # return 10 - sum(board.nships_of_size)
-        # return sum(board.nships_of_size)
         pass
 
 
