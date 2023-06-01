@@ -27,14 +27,173 @@ from search import (
     recursive_best_first_search,
 )
 
-def create_grids_ship1(hints, starting_board):
-    grids = []
+def create_hint_ships(hints, starting_board):
+    """Creates all the ships that could be used to solve the given hints, and
+    returns the 'no_ships' set that will be given as an argument to the ship
+    creation functions to make sure they don't create any repeated or
+    unnecessary ship grids"""
+
+    # Stores the position around the hints
+    # The positions are stored as numbers in the format "row*10 + col"
+    no_ships = set()
+
+    for pos in Board.hints_pos:
+        row = pos[0]
+        col = pos[1]
+
+        if hints[row][col] == WATER:
+            continue # Water is always already placed in the starting grid
+        
+        elif hints[row][col] == LEFT:
+            # Creates every ship grid that could solve a "LEFT" hint
+            if col <= 6:
+                if starting_board.can_place_ship2_h(row, col):
+                    Board.grids_ship2_hor.append(((row, col), 2, 'hor'))
+                if starting_board.can_place_ship3_h(row, col):
+                    Board.grids_ship3_hor.append(((row, col), 3, 'hor'))
+                if starting_board.can_place_ship4_h(row, col):
+                    Board.grids_ship4_hor.append(((row, col), 4, 'hor'))
+            elif col == 7:
+                if starting_board.can_place_ship2_h(row, col):
+                    Board.grids_ship2_hor.append(((row, col), 2, 'hor'))
+                if starting_board.can_place_ship3_h(row, col):
+                    Board.grids_ship3_hor.append(((row, col), 3, 'hor'))
+            elif col == 8:
+                Board.grids_ship2_hor.append(((row, col), 2, 'hor'))
+
+        elif hints[row][col] == RIGHT:
+            # Creates every ship grid that could solve a "RIGHT" hint
+            if col >= 3:
+                if starting_board.can_place_ship2_h(row, col-1):
+                    Board.grids_ship2_hor.append(((row, col-1), 2, 'hor'))
+                if starting_board.can_place_ship3_h(row, col-2):
+                    Board.grids_ship3_hor.append(((row, col-2), 3, 'hor'))
+                if starting_board.can_place_ship4_h(row, col-3):
+                    Board.grids_ship4_hor.append(((row, col-3), 4, 'hor'))
+            elif col == 2:
+                if starting_board.can_place_ship2_h(row, col-1):
+                    Board.grids_ship2_hor.append(((row, col-1), 2, 'hor'))
+                if starting_board.can_place_ship3_h(row, col-2):
+                    Board.grids_ship3_hor.append(((row, col-2), 3, 'hor'))
+            elif col == 1:
+                Board.grids_ship2_hor.append(((row, col-1), 2, 'hor'))
+
+        elif hints[row][col] == TOP:
+            # Creates every ship grid that could solve a "TOP" hint
+            if row <= 6:
+                if starting_board.can_place_ship2_v(row, col):
+                    Board.grids_ship2_ver.append(((row, col), 2, 'ver'))
+                if starting_board.can_place_ship3_v(row, col):
+                    Board.grids_ship3_ver.append(((row, col), 3, 'ver'))
+                if starting_board.can_place_ship4_v(row, col):
+                    Board.grids_ship4_ver.append(((row, col), 4, 'ver'))
+            elif row == 7:
+                if starting_board.can_place_ship2_v(row, col):
+                    Board.grids_ship2_ver.append(((row, col), 2, 'ver'))
+                if starting_board.can_place_ship3_v(row, col):
+                    Board.grids_ship3_ver.append(((row, col), 3, 'ver'))
+            elif row == 8:
+                Board.grids_ship2_ver.append(((row, col), 2, 'ver'))
+        
+        elif hints[row][col] == BOTTOM:
+            # Creates every ship grid that could solve a "BOTTOM" hint
+            if row >= 3:
+                if starting_board.can_place_ship2_v(row-1, col):
+                    Board.grids_ship2_ver.append(((row-1, col), 2, 'ver'))
+                if starting_board.can_place_ship3_v(row-2, col):
+                    Board.grids_ship3_ver.append(((row-2, col), 3, 'ver'))
+                if starting_board.can_place_ship4_v(row-3, col):
+                    Board.grids_ship4_ver.append(((row-3, col), 4, 'ver'))
+            elif row == 2:
+                if starting_board.can_place_ship2_v(row-1, col):
+                    Board.grids_ship2_ver.append(((row-1, col), 2, 'ver'))
+                if starting_board.can_place_ship2_v(row-2, col):
+                    Board.grids_ship3_ver.append(((row-2, col), 3, 'ver'))
+            elif row == 1:
+                Board.grids_ship2_ver.append(((row-1, col), 2, 'ver'))
+        
+        elif hints[row][col] == MIDDLE:
+            # Creates every ship grid that could solve a "MIDDLE" hint
+            if 2 <= col <= 7:
+                if starting_board.can_place_ship3_h(row, col-1):
+                    Board.grids_ship3_hor.append(((row, col-1), 3, 'hor'))
+                if starting_board.can_place_ship4_h(row, col-1):
+                    Board.grids_ship4_hor.append(((row, col-1), 4, 'hor'))
+                if starting_board.can_place_ship4_h(row, col-2):
+                    Board.grids_ship4_hor.append(((row, col-2), 4, 'hor'))
+            elif col == 1:
+                if starting_board.can_place_ship3_h(row, col-1):
+                    Board.grids_ship3_hor.append(((row, col-1), 3, 'hor'))
+                if starting_board.can_place_ship4_h(row, col-1):
+                    Board.grids_ship4_hor.append(((row, col-1), 4, 'hor'))
+            elif col == 8:
+                if starting_board.can_place_ship3_h(row, col-1):
+                    Board.grids_ship3_hor.append(((row, col-1), 3, 'hor'))
+                if starting_board.can_place_ship4_h(row, col-2):
+                    Board.grids_ship4_hor.append(((row, col-2), 4, 'hor'))
+
+            if 2 <= row <= 7:
+                if starting_board.can_place_ship3_v(row-1, col):
+                    Board.grids_ship3_ver.append(((row-1, col), 3, 'ver'))
+                if starting_board.can_place_ship4_v(row-1, col):
+                    Board.grids_ship4_ver.append(((row-1, col), 4, 'ver'))
+                if starting_board.can_place_ship4_v(row-2, col):
+                    Board.grids_ship4_ver.append(((row-2, col), 4, 'ver'))
+            elif row == 1:
+                if starting_board.can_place_ship3_v(row-1, col):
+                    Board.grids_ship3_ver.append(((row-1, col), 3, 'ver'))
+                if starting_board.can_place_ship4_v(row-1, col):
+                    Board.grids_ship4_ver.append(((row-1, col), 4, 'ver'))
+            elif row == 8:
+                if starting_board.can_place_ship3_v(row-1, col):
+                    Board.grids_ship3_ver.append(((row-1, col), 3, 'ver'))
+                if starting_board.can_place_ship4_v(row-2, col):
+                    Board.grids_ship4_ver.append(((row-2, col), 4, 'ver'))
+
+
+        # Guarantees no more ship grids are created around the hint's position
+        if row-1 >= 0:
+            if col-1 >= 0:
+                no_ships.add((row-1)*10 + (col-1))
+            no_ships.add((row-1)*10 + col)
+            if col+1 <= 9:
+                no_ships.add((row-1)*10 + (col+1))
+        if col-1 >= 0:
+            no_ships.add(row*10 + (col-1))
+        no_ships.add(row*10 + col)
+        if col+1 <= 9:
+            no_ships.add(row*10 + (col+1))
+        if row+1 <= 9:
+            if col-1 >= 0:
+                no_ships.add((row+1)*10 + (col-1))
+            no_ships.add((row+1)*10 + col)
+            if col+1 <= 9:
+                no_ships.add((row+1)*10 + (col+1))
+
+    return no_ships
+
+
+def create_grids_ship1(hints, starting_board, no_ships):
+    """Creates every grid with size 1 ships, except the ones that are given in
+    the hints. Iterates from left to right."""
     row = 0
     col = 0
 
-    # poem circle em todas posições onde pode estar na grid
-    # existem no total no maximo 100 combinações diferentes de meter esse ship
+    # Existem no total no maximo 100 combinações diferentes de meter esse ship
     for _ in range(100):
+
+        # Checks if the ship is around any hint's position
+        if (row*10 + col) in no_ships:
+            col += 1
+            if col >= 10:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+
+        # Checks if the row has enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
             row += 1
             col = 0
@@ -42,6 +201,7 @@ def create_grids_ship1(hints, starting_board):
                 break
             continue
 
+        # Checks if the column has enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
             col += 1
             if col == 10:
@@ -52,16 +212,16 @@ def create_grids_ship1(hints, starting_board):
                     break
             continue
         
-        # cria a grid com o barco
+        # Cria a grid com o barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == CENTER) and\
             starting_board.grid[row][col] == UNKNOWN:
 
             grid = ((row, col), 1, "hor")
 
-            grids.append(grid)
+            Board.grids_ship1.append(grid)
 
-        # proximo ponto
+        # Proximo ponto
         col += 1
         if col == 10:
             col = 0
@@ -70,16 +230,37 @@ def create_grids_ship1(hints, starting_board):
             if row == 10:
                 break
 
-    return grids
 
-def create_grids_ship2_horizontal(hints, starting_board):
-    grids = []
+def create_grids_ship2_horizontal(hints, starting_board, no_ships):
+    """Creates every grid with size 2 horizontal ships, except the ones that
+    could be used to solve the given hints. Iterates from left to right."""
     row = 0
     col = 0
 
-    # poem LEFT RIGHT em todas posições onde pode estar na grid
-    # existem no total no maximo 90 combinações diferentes de meter esse ship na horizontal
+    # Existem no total no maximo 90 combinações diferentes de meter esse ship na horizontal
     for _ in range(90):
+
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            col += 1
+            if col >= 9:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+1)) in no_ships:
+            col += 2
+            if col >= 9:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]\
                 or Board.rows_nships[row] < 2\
                 or starting_board.ships_placed_rows[row] + 2 > Board.rows_nships[row]:
@@ -91,6 +272,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                     break
             continue
 
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
             col += 1
             if col >= 9:
@@ -100,7 +282,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 if row == 10:
                     break
             continue
-        if starting_board.ships_placed_cols[col+1] == Board.cols_nships[col+1]:
+        elif starting_board.ships_placed_cols[col+1] == Board.cols_nships[col+1]:
             col += 2
             if col >= 9:
                 col = 0
@@ -110,7 +292,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                     break
             continue
 
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == LEFT) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -121,7 +303,7 @@ def create_grids_ship2_horizontal(hints, starting_board):
                 
                 grid = ((row, col), 2, "hor")
 
-                grids.append(grid)
+                Board.grids_ship2_hor.append(grid)
 
         # proximo ponto
         col += 1
@@ -132,16 +314,37 @@ def create_grids_ship2_horizontal(hints, starting_board):
             if row == 10:
                 break
 
-    return grids
 
-def create_grids_ship2_vertical(hints, starting_board):
-    grids = []
+def create_grids_ship2_vertical(hints, starting_board, no_ships):
+    """Creates every grid with size 2 vertical ships, except the ones that could
+    be used to solve the given hints. Iterates from top to bottom."""
     row = 0
     col = 0
 
-    # poem TOP BOTTOM em todas posições onde pode estar na grid
-    # existem no total no maximo 90 combinações diferentes de meter esse ship na vertical
+    # Existem no total no maximo 90 combinações diferentes de meter esse ship na vertical
     for _ in range(90):
+
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            row += 1
+            if row >= 9:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+1)*10 + col) in no_ships:
+            row += 2
+            if row >= 9:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]\
                 or Board.cols_nships[col] < 2\
                 or starting_board.ships_placed_cols[col] + 2 > Board.cols_nships[col]:
@@ -152,6 +355,7 @@ def create_grids_ship2_vertical(hints, starting_board):
                 break
             continue
         
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
             row += 1
             if row >= 9:
@@ -171,7 +375,7 @@ def create_grids_ship2_vertical(hints, starting_board):
                     break
             continue
 
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == TOP) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -182,7 +386,7 @@ def create_grids_ship2_vertical(hints, starting_board):
                 
                 grid = ((row, col), 2, "ver")
 
-                grids.append(grid)
+                Board.grids_ship2_ver.append(grid)
 
         # proximo ponto
         row += 1
@@ -193,17 +397,46 @@ def create_grids_ship2_vertical(hints, starting_board):
             if col == 10:
                 break
 
-    return grids
 
-def create_grids_ship3_horizontal(hints, starting_board):
-    grids = []
+def create_grids_ship3_horizontal(hints, starting_board, no_ships):
+    """Creates every grid with size 3 horizontal ships, except the ones that
+    could be used to solve the given hints. Iterates from left to right."""
     row = 0
     col = 0
 
-    # poem LEFT MIDDLE RIGHT em todas posições onde pode estar na grid
-    # existem no total no maximo 80 combinações diferentes de meter esse ship na horizontal
+    # Existem no total no maximo 80 combinações diferentes de meter esse ship na horizontal
     for _ in range(80):
 
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            col += 1
+            if col >= 8:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+1)) in no_ships:
+            col += 2
+            if col >= 8:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+2)) in no_ships:
+            col += 3
+            if col >= 8:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]\
                 or Board.rows_nships[row] < 3\
                 or starting_board.ships_placed_rows[row] + 3 > Board.rows_nships[row]:
@@ -213,6 +446,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                 break
             continue
 
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
             col += 1
             if col >= 8:
@@ -241,7 +475,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                     break
             continue
 
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == LEFT) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -256,7 +490,7 @@ def create_grids_ship3_horizontal(hints, starting_board):
                     
                     grid = ((row, col), 3, "hor")
 
-                    grids.append(grid)
+                    Board.grids_ship3_hor.append(grid)
 
         # proximo ponto
         col += 1
@@ -267,16 +501,46 @@ def create_grids_ship3_horizontal(hints, starting_board):
             if row == 10:
                 break
 
-    return grids
 
-def create_grids_ship3_vertical(hints, starting_board):
-    grids = []
+def create_grids_ship3_vertical(hints, starting_board, no_ships):
+    """Creates every grid with size 3 vertical ships, except the ones that could
+    be used to solve the given hints. Iterates from top to bottom."""
     row = 0
     col = 0
 
-    # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
-    # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
+    # Existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
     for _ in range(80):
+
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            row += 1
+            if row >= 8:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+1)*10 + col) in no_ships:
+            row += 2
+            if row >= 8:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+2)*10 + col) in no_ships:
+            row += 3
+            if row >= 8:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]\
                 or Board.cols_nships[col] < 3\
                 or starting_board.ships_placed_cols[col]+3 > Board.cols_nships[col]:
@@ -286,6 +550,7 @@ def create_grids_ship3_vertical(hints, starting_board):
                 break
             continue
 
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
             row += 1
             if row >= 8:
@@ -314,7 +579,7 @@ def create_grids_ship3_vertical(hints, starting_board):
                     break
             continue
         
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == TOP) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -329,7 +594,7 @@ def create_grids_ship3_vertical(hints, starting_board):
                     
                     grid = ((row, col), 3, "ver")
                     
-                    grids.append(grid)
+                    Board.grids_ship3_ver.append(grid)
 
         # proximo ponto
         row += 1
@@ -340,16 +605,55 @@ def create_grids_ship3_vertical(hints, starting_board):
             if col == 10:
                 break
 
-    return grids
 
-def create_grids_ship4_horizontal(hints, starting_board):
-    grids = []
+def create_grids_ship4_horizontal(hints, starting_board, no_ships):
+    """Creates every grid with size 4 horizontal ships, except the ones that
+    could be used to solve the given hints. Iterates from left to right."""
     row = 0
     col = 0
-
-    # poem LEFT MIDDLE MIDDLE RIGHT em todas posições onde pode estar na grid
+    
     # existem no total no maximo 70 combinações diferentes de meter esse ship na horizontal
     for _ in range(70):
+
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            col += 1
+            if col >= 7:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+1)) in no_ships:
+            col += 2
+            if col >= 7:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+2)) in no_ships:
+            col += 3
+            if col >= 7:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+        elif (row*10 + (col+3)) in no_ships:
+            col += 4
+            if col >= 7:
+                col = 0
+                row += 1
+                # Não existe mais nenhum ponto
+                if row == 10:
+                    break
+            continue
+
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row] or Board.rows_nships[row] < 4\
                 or starting_board.ships_placed_rows[row] + 4 > Board.rows_nships[row]:
             row += 1
@@ -358,6 +662,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                 break
             continue
 
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col]:
             col += 1
             if col >= 7:
@@ -395,7 +700,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                     break
             continue
 
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == LEFT) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -414,7 +719,7 @@ def create_grids_ship4_horizontal(hints, starting_board):
                         
                         grid = ((row, col), 4, "hor")
                         
-                        grids.append(grid)
+                        Board.grids_ship4_hor.append(grid)
 
         # proximo ponto
         col += 1
@@ -425,16 +730,55 @@ def create_grids_ship4_horizontal(hints, starting_board):
             if row == 10:
                 break
 
-    return grids
 
-def create_grids_ship4_vertical(hints, starting_board):
-    grids = []
+def create_grids_ship4_vertical(hints, starting_board, no_ships):
+    """Creates every grid with size 4 vertical ships, except the ones that could
+    be used to solve the given hints. Iterates from top to bottom."""
     row = 0
     col = 0
 
-    # poem TOP MIDDLE BOTTOM em todas posições onde pode estar na grid
-    # existem no total no maximo 80 combinações diferentes de meter esse ship na vertical
+    # Existem no total no maximo 70 combinações diferentes de meter esse ship na vertical
     for _ in range(70):
+
+        # Checks if the ships are around any hint's position
+        if (row*10 + col) in no_ships:
+            row += 1
+            if row >= 7:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+1)*10 + col) in no_ships:
+            row += 2
+            if row >= 7:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+2)*10 + col) in no_ships:
+            row += 3
+            if row >= 7:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+        elif ((row+3)*10 + col) in no_ships:
+            row += 4
+            if row >= 7:
+                row = 0
+                col += 1
+                # Não existe mais nenhum ponto
+                if col == 10:
+                    break
+            continue
+
+        # Checks if the columns have enough capacity for the ship to fit
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col] or Board.cols_nships[col] < 4\
                 or starting_board.ships_placed_cols[col] + 4 > Board.cols_nships[col]:
             col += 1
@@ -443,6 +787,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                 break
             continue
 
+        # Checks if the rows have enough capacity for the ship to fit
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
             row += 1
             if row >= 7:
@@ -480,7 +825,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                     break
             continue
 
-        # cria a grid com o barco se for uma posição onde possa haver esse barco
+        # Cria a grid com o barco se for uma posição onde possa haver esse barco
         if (hints[row][col] == UNKNOWN or
             hints[row][col] == TOP) and\
             starting_board.grid[row][col] == UNKNOWN and\
@@ -499,7 +844,7 @@ def create_grids_ship4_vertical(hints, starting_board):
                         
                         grid = ((row, col), 4, "ver")
                         
-                        grids.append(grid)
+                        Board.grids_ship4_ver.append(grid)
 
         # proximo ponto
         row += 1
@@ -510,18 +855,24 @@ def create_grids_ship4_vertical(hints, starting_board):
             if col == 10:
                 break
 
-    return grids
 
 def create_grids(hints, starting_board):
     """Receives a grid with the ships given in the hints and creates all
     possible grids that can be used to solve the puzzle."""
-    Board.grids_ship1 = create_grids_ship1(hints, starting_board)
-    Board.grids_ship2_hor = create_grids_ship2_horizontal(hints, starting_board)
-    Board.grids_ship2_ver = create_grids_ship2_vertical(hints, starting_board)
-    Board.grids_ship3_hor = create_grids_ship3_horizontal(hints, starting_board)
-    Board.grids_ship3_ver = create_grids_ship3_vertical(hints, starting_board)
-    Board.grids_ship4_hor = create_grids_ship4_horizontal(hints, starting_board)
-    Board.grids_ship4_ver = create_grids_ship4_vertical(hints, starting_board)
+
+    # 'no_ships' stores the positions around the hints;
+    # create_hint_ships creates the ships that could be used to solve the hints.
+    no_ships = create_hint_ships(hints, starting_board)
+
+    # Creates all grids, except those that could be used to solve the hints or
+    # that occupy the spaces around said hints.
+    create_grids_ship1(hints, starting_board, no_ships)
+    create_grids_ship2_horizontal(hints, starting_board, no_ships)
+    create_grids_ship2_vertical(hints, starting_board, no_ships)
+    create_grids_ship3_horizontal(hints, starting_board, no_ships)
+    create_grids_ship3_vertical(hints, starting_board, no_ships)
+    create_grids_ship4_horizontal(hints, starting_board, no_ships)
+    create_grids_ship4_vertical(hints, starting_board, no_ships)
 
 
 class BimaruState:
@@ -544,10 +895,11 @@ class Board:
     rows_nships = []
     cols_nships = []
 
-    # Saves the positions that MUST have ships in the final solution
+    # Saves the positions that MUST have ships in the final solution.
+    # This list is constructed during interpret_hints()
     hints_pos = []
 
-    # Lists of grids
+    # Lists of ship grids
     """Note: a ship grid is a tuple with the format ((row,col), size, orientation),
     where (row,col) is the ship's first position, size is the ship's size and
     orientation is either 'hor' (horizontal) or 'ver' (vertical)"""
@@ -563,19 +915,20 @@ class Board:
         # The Board's grid is a 10x10 grid that represents the puzzle's board
         self.grid = grid
 
-        # ships_placed_rows[n] holds how many ships have been placed in row n
+        # ships_placed_rows[i] stores how many ships have been placed in row i
         if len(ships_placed_rows) == 0:
             self.ships_placed_rows = [0 for _ in range(10)]
         else:
             self.ships_placed_rows = ships_placed_rows
         
-        # ships_placed_cols[n] holds how many ships have been placed in column n
+        # ships_placed_cols[j] stores how many ships have been placed in column j
         if len(ships_placed_cols) == 0:
             self.ships_placed_cols = [0 for _ in range(10)]
         else:
             self.ships_placed_cols = ships_placed_cols
 
-        # Index 'i' has the number of ships of size i+1 placed in this Board's grid
+        # Index 'i' of nships_of_size has the number of ships of size i+1
+        # placed in this Board's grid
         if len(nships_of_size) == 0:
             self.nships_of_size = [0 for _ in range(4)]
         else:
@@ -606,6 +959,7 @@ class Board:
         diagonals_left = self.adjacent_vertical_values(row, col - 1)
         diagonals_right = self.adjacent_vertical_values(row, col + 1)
 
+        # Checks if none of the positions around (row, col) have ships
         for n in range(2): # They are all tuples with 2 values each
             if adj_horizontal[n] > 0 or adj_vertical[n] > 0 or \
                 diagonals_left[n] > 0 or diagonals_right[n] > 0:
@@ -655,7 +1009,8 @@ class Board:
                 or self.ships_placed_rows[row]+3 > Board.rows_nships[row]:
             return False
         
-        return self.no_ships_around(row, col) and self.no_ships_around(row, col+1) and self.no_ships_around(row, col+2)
+        return self.no_ships_around(row, col) and self.no_ships_around(row, col+1)\
+                and self.no_ships_around(row, col+2)
     
     def can_place_ship3_v(self, row: int, col: int):
         """Returns True if a vertical size 3 ship can be placed in the given position"""
@@ -668,7 +1023,8 @@ class Board:
                 or self.ships_placed_cols[col]+3 > Board.cols_nships[col]:
             return False
         
-        return self.no_ships_around(row, col) and self.no_ships_around(row+1, col) and self.no_ships_around(row+2, col)
+        return self.no_ships_around(row, col) and self.no_ships_around(row+1, col)\
+                and self.no_ships_around(row+2, col)
     
     def can_place_ship4_h(self, row: int, col: int):
         """Returns True if a horizontal size 4 ship can be placed in the given position"""
@@ -704,6 +1060,7 @@ class Board:
     
     def check_objective(self):
         """Returns True if the Board's grid is the puzzle's solution"""
+        
         # Checks if all rows and columns have the required number of ships
         for n in range(10):
             if self.ships_placed_rows[n] != Board.rows_nships[n] or\
@@ -712,7 +1069,7 @@ class Board:
 
         # Checks if all hint position have ships in them
         for pos in self.hints_pos:
-            if self.grid[pos[0]][pos[1]] == -1:
+            if self.grid[pos[0]][pos[1]] == UNKNOWN:
                 return False
         
         # Checks if there are 4 size 1 ships, 3 size 2 ships,
@@ -724,14 +1081,15 @@ class Board:
         return True
 
     def add_ship(self, ship_grid):
-        """Returns a new 10x10 grid that is the combination of this Board's grid
-        and the ship grid given as argument"""
+        """Returns a new 10x10 grid that is the result of placing the
+        ship_grid's ship in this Board's grid"""
         new_grid = [row[:] for row in self.grid] # hard copy of this board's grid
 
-        size = ship_grid[1]
-        orientation = ship_grid[2]
+        # Ship grids are a tuple with the format ((row, col), size, orientation)
         row = ship_grid[0][0]
         col = ship_grid[0][1]
+        size = ship_grid[1]
+        orientation = ship_grid[2]
         
         if size == 4:
             if orientation == "hor":
@@ -766,6 +1124,9 @@ class Board:
         return new_grid
 
     def get_possible_actions(self):
+        """Returns a list of all possible actions for this Board. An action is a
+        ship grid whose ship can be placed in this Board's grid. Prioritizes
+        placing bigger ships first"""
         actions = []
 
         if self.nships_of_size[3] == 0: # We need 1 ship of size 4 placed
@@ -830,19 +1191,22 @@ class Board:
 
     def interpret_hints(self, nhints: int):
         """Interprets the given hints and does the following things:
-        - Creates the puzzle's starting grid and gives it to this Board
+        - Creates the puzzle's starting grid and gives it to this Board instance
         - Places any ships of size 1 given in the hints in the starting grid
         - Updates the 'nships_of_size', 'ships_placed_rows' and 
         'ships_placed_cols' lists if a size 1 ship is placed
         - Places water around those ships of size 1
-        - Reading the hints, puts water on the necessary positions
+        - Interpreting the hints, puts water on the necessary positions
         - Fills the 'hints_pos' list, that saves each hint's position
         - Creates all possible grids to be added to the starting grid"""
 
-        # A matrix with the hints' ships and water spots placed
+        # hints_matrix is a grid with the hints' ships and water spots placed
         hints_matrix = [[-1] * 10 for _ in range(10)]
+
+        # The starting grid is initially empty
         starting_grid = [[-1 for _ in range(10)] for _ in range(10)]
 
+        # Reads each hint and acts accordingly
         for _ in range(nhints):
             hints_aux = sys.stdin.readline().strip("\n\r")
             hints_aux = hints_aux.split("\t")
@@ -1044,6 +1408,7 @@ class Board:
 
         string_grid = ""
 
+        # Creates a set so that it only needs to iterate through hints_pos once
         hints = set()
         for pos in Board.hints_pos:
             hints.add(pos[0]*10 + pos[1]) # (1,5) = 15, (5,8) = 58, etc
@@ -1051,49 +1416,49 @@ class Board:
         for row in range(10):
             for col in range(10):
 
-                if self.grid[row][col] == -1:
+                if self.grid[row][col] == UNKNOWN:
                     if (row*10 + col) in hints:
                         string_grid += "W"
                     else:
                         string_grid += "."
 
-                elif self.grid[row][col] == 0:
+                elif self.grid[row][col] == WATER:
                     if (row*10 + col) in hints:
                         string_grid += "W"
                     else:
                         string_grid += "."
                 
-                elif self.grid[row][col] == 1:
+                elif self.grid[row][col] == LEFT:
                     if (row*10 + col) in hints:
                         string_grid += "L"
                     else:
                         string_grid += "l"
                 
-                elif self.grid[row][col] == 2:
+                elif self.grid[row][col] == RIGHT:
                     if (row*10 + col) in hints:
                         string_grid += "R"
                     else:
                         string_grid += "r"
 
-                elif self.grid[row][col] == 3:
+                elif self.grid[row][col] == TOP:
                     if (row*10 + col) in hints:
                         string_grid += "T"
                     else:
                         string_grid += "t"
                 
-                elif self.grid[row][col] == 4:
+                elif self.grid[row][col] == BOTTOM:
                     if (row*10 + col) in hints:
                         string_grid += "B"
                     else:
                         string_grid += "b"
                 
-                elif self.grid[row][col] == 5:
+                elif self.grid[row][col] == MIDDLE:
                     if (row*10 + col) in hints:
                         string_grid += "M"
                     else:
                         string_grid += "m"
                 
-                elif self.grid[row][col] == 6:
+                elif self.grid[row][col] == CENTER:
                     if (row*10 + col) in hints:
                         string_grid += "C"
                     else:
@@ -1115,8 +1480,7 @@ class Bimaru(Problem):
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        actions = state.board.get_possible_actions()
-        return actions
+        return state.board.get_possible_actions()
 
     def result(self, state: BimaruState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -1135,7 +1499,7 @@ class Bimaru(Problem):
         new_ships_placed_rows = state.board.ships_placed_rows.copy()
         new_ships_placed_cols = state.board.ships_placed_cols.copy()
 
-        new_nships_of_size[action[1]-1] += 1
+        new_nships_of_size[size-1] += 1
         new_board = Board(new_grid, new_nships_of_size, new_ships_placed_rows, new_ships_placed_cols)
 
         if orientation == "hor":
