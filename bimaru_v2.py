@@ -16,8 +16,6 @@ BOTTOM = 4
 MIDDLE = 5
 CENTER = 6
 
-import numpy as np
-
 import sys
 from search import (
     Problem,
@@ -440,12 +438,9 @@ def create_grids_ship4_vertical(hints, starting_board):
         if starting_board.ships_placed_cols[col] == Board.cols_nships[col] or Board.cols_nships[col] < 4\
                 or starting_board.ships_placed_cols[col] + 4 > Board.cols_nships[col]:
             col += 1
+            row = 0
             if col == 10:
-                row += 1
-                col = 0
-                # Não existe mais nenhum ponto
-                if row == 10:
-                    break
+                break
             continue
 
         if starting_board.ships_placed_rows[row] == Board.rows_nships[row]:
@@ -1199,6 +1194,7 @@ class Bimaru(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
+        #board = node.state.board
         pass
 
 
